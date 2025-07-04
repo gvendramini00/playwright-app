@@ -5,16 +5,23 @@ import com.microsoft.playwright.options.AriaRole;
 import com.microsoft.playwright.options.HarContentPolicy;
 import com.microsoft.playwright.options.HarMode;
 import lombok.extern.slf4j.Slf4j;
+import org.gig.myplayrightapp.dto.InsertPlayerDTO;
+import org.gig.myplayrightapp.util.RegistrationDataUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.time.LocalDate;
 import java.util.Arrays;
 import java.util.List;
 
 @Slf4j
 @Service
 public class PlaywrightTestService {
+
+    @Autowired
+    private PlayerService playerService;
 
     public String testCase001RunPreProdAccessTest() {
         log.info("✅ TestCase001 executed: Go to preprod site");
@@ -144,13 +151,46 @@ public class PlaywrightTestService {
     public String testCase004RunManualRegisterTest() {
         log.info("✅ TestCase004 executed: Manual Registration (non-Veridas)");
 
+        InsertPlayerDTO dto;
+
+        // 🔁 Loop until we find unique values
+        do {
+            String email = RegistrationDataUtils.generateNextEmail();
+            String dni = RegistrationDataUtils.generateRandomDNI();
+            String userName = RegistrationDataUtils.generateUniqueUsername();
+            String phoneNumber = RegistrationDataUtils.generateRandomPhoneNumber();
+
+            dto = new InsertPlayerDTO(
+                    "test",                         // firstName
+                    "testtest",                     // middleName
+                    "testesttest",                  // lastName
+                    1,                              // gender (e.g., 1 = male)
+                    LocalDate.of(1990, 1, 21),      // birthDate
+                    dni,
+                    email,
+                    phoneNumber,
+                    "carrer copernic 80",           // address
+                    277,                            // state
+                    12,                             // taxState
+                    "ABELEDA",                      // city
+                    "27513",                        // zipCode
+                    userName,
+                    "Password1",
+                    "Lugar de nacimiento de tu padre",
+                    "barcelona"
+            );
+
+            log.info("🔍 Checking player uniqueness for: alias={}, email={}, phone={}, dni={}",
+                    dto.alias(), dto.email(), dto.phone(), dto.nationalId());
+
+        } while (playerService.existsAnyMatching(dto.alias(), dto.phone(), dto.nationalId(), dto.email()));
+
+        log.info("✅ Unique player to be inserted: {}", dto.email());
+
         try (Playwright playwright = Playwright.create()) {
             Files.createDirectories(Paths.get("screenshots"));
 
-            Browser browser = playwright.chromium().launch(new BrowserType.LaunchOptions()
-                    .setHeadless(false)
-            );
-
+            Browser browser = playwright.chromium().launch(new BrowserType.LaunchOptions().setHeadless(false));
             BrowserContext context = browser.newContext();
             Page page = context.newPage();
 
@@ -160,46 +200,76 @@ public class PlaywrightTestService {
             page.getByRole(AriaRole.LINK, new Page.GetByRoleOptions().setName("REGISTRO MANUAL (~12 horas)")).click();
 
             // 2. Fill personal info
-            page.locator("#name").fill("test");
-            page.locator("#middlename").fill("testtest");
-            page.locator("#surname").fill("testesttest");
+            page.locator("#name").fill(dto.firstName());
+            page.locator("#middlename").fill(dto.middleName());
+            page.locator("#surname").fill(dto.lastName());
             page.getByText("Hombre").click();
-            page.locator("#day").selectOption("21");
-            page.locator("#month").selectOption("0"); // January is 0
-            page.locator("#year").selectOption("1990");
-            page.locator("#nationalId").fill("X0638235P");
+            page.locator("#day").selectOption(String.valueOf(dto.birthDate().getDayOfMonth()));
+            page.locator("#month").selectOption(String.valueOf(dto.birthDate().getMonthValue() - 1)); // 0-indexed
+            page.locator("#year").selectOption(String.valueOf(dto.birthDate().getYear()));
+            page.locator("#nationalId").fill(dto.nationalId());
             page.locator("#c19oldfalse").check();
             page.getByRole(AriaRole.LINK, new Page.GetByRoleOptions().setName("Continuar")).click();
 
             // 3. Fill contact info
-            page.locator("#e_mail").fill("testmee@gmail.com");
-            page.locator("#re_mail").fill("testmee@gmail.com");
-            page.locator("#phoneInput").fill("633863059");
-            page.locator("#address").fill("carrer copernic 80");
-            page.locator("#state").selectOption("277");
-            //page.locator("#country").click(); // Optional interaction
-            page.locator("#tax_state").selectOption("12");
-            page.locator("#city_select").selectOption("ABELEDA");
-            page.locator("#zipCode_select").selectOption("27513");
+            page.locator("#e_mail").fill(dto.email());
+            page.locator("#re_mail").fill(dto.email());
+            page.locator("#phoneInput").fill(dto.phone());
+            page.locator("#address").fill(dto.address());
+            page.locator("#state").selectOption(String.valueOf(dto.state()));
+            page.locator("#tax_state").selectOption(String.valueOf(dto.taxState()));
+            page.locator("#city_select").selectOption(dto.city());
+            page.locator("#zipCode_select").selectOption(dto.zipCode());
             page.getByRole(AriaRole.LINK, new Page.GetByRoleOptions().setName("Seguir")).click();
 
             // 4. Fill account credentials
             Locator userField = page.locator("#user");
             userField.waitFor(new Locator.WaitForOptions().setTimeout(10000));
-            userField.fill("testmenoww");
+            userField.fill(dto.alias());
+            page.locator("#pwdField").fill(dto.password());
+            page.locator("#re_password").fill(dto.password());
 
-            page.locator("#pwdField").fill("Password1");
-            page.locator("#re_password").fill("Password1");
-            page.locator("#securityResponse").fill("barcelona");
+            // Security question and response
+            page.locator("#securityQuestion").selectOption(dto.securityQuestion());
+            page.locator("#securityResponse").fill(dto.securityResponse());
+
+            // Accept checkboxes
             page.locator("input[name=\"c18old\"]").check();
             page.locator("#subscription1").check();
-            page.getByRole(AriaRole.LINK, new Page.GetByRoleOptions().setName("Empezar")).click();
 
-            // 6. Screenshot final state
-            page.waitForTimeout(1500);
-            page.screenshot(new Page.ScreenshotOptions().setPath(Paths.get("screenshots/testCase004.png")));
+            String beforeSubmitUrl = page.url();
+            page.getByRole(AriaRole.LINK, new Page.GetByRoleOptions().setName("Empezar"))
+                    .click(new Locator.ClickOptions().setTimeout(10000));
+
+            page.waitForURL(url -> !url.equals(beforeSubmitUrl), new Page.WaitForURLOptions().setTimeout(5000));
+
+            // 5. Check for visible errors
+            Locator errorLocator = page.locator(".error, .text-danger, .invalid-feedback");
+            if (errorLocator.count() > 0) {
+                for (int i = 0; i < errorLocator.count(); i++) {
+                    if (errorLocator.nth(i).isVisible()) {
+                        String errorText = errorLocator.nth(i).innerText();
+                        String failPath = "screenshots/testCase004_failed_" + System.currentTimeMillis() + ".png";
+                        page.screenshot(new Page.ScreenshotOptions().setPath(Paths.get(failPath)));
+                        throw new RuntimeException("❌ Registration failed: " + errorText);
+                    }
+                }
+            }
+
+            // 6. Validate the page advanced
+            if (page.url().equals(beforeSubmitUrl)) {
+                String failPath = "screenshots/testCase004_failed_no_redirect_" + System.currentTimeMillis() + ".png";
+                page.screenshot(new Page.ScreenshotOptions().setPath(Paths.get(failPath)));
+                throw new RuntimeException("❌ Registration failed: Page did not proceed after submitting.");
+            }
+
+            // 7. Screenshot success
+            String screenshotPath = "screenshots/testCase004_" + System.currentTimeMillis() + ".png";
+            page.screenshot(new Page.ScreenshotOptions().setPath(Paths.get(screenshotPath)));
 
             browser.close();
+            RegistrationDataUtils.logGeneratedUser(dto.email(), dto.nationalId(), dto.alias(), screenshotPath);
+            log.info("✅ Manual registration succeeded for user: {}", dto.alias());
             return "✅ Manual registration completed successfully.";
 
         } catch (Exception e) {
@@ -207,6 +277,7 @@ public class PlaywrightTestService {
             return "❌ TestCase004 failed: " + e.getMessage();
         }
     }
+
 
     public String testCase005RunInvalidNameRegistrationTest() {
         log.info("✅ TestCase005 executed: Registration with missing name");

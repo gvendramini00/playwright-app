@@ -76,12 +76,21 @@ Each test saves a screenshot of the final state in the `/screenshots` folder for
 
 ---
 
+## 🧪 API Documentation with Swagger
+
+You can explore and trigger the available test cases via **Swagger UI**:
+
+👉 [http://localhost:8080/swagger-ui.html](http://localhost:8080/swagger-ui.html)  
+Or, if that doesn't load:  
+👉 [http://localhost:8080/swagger-ui/index.html](http://localhost:8080/swagger-ui/index.html)
+
+---
+
 ## 💡 Notes
 
 - Ensure you have a stable internet connection and that no modal dialogs block automated browser flows.
-- You can customize timeouts and test steps inside each test case file under the `tests` directory (if applicable).
+- You can customize timeouts and test steps inside each test case method in the service class.
 
----
 
 ## 🛠️ Dependencies
 
