@@ -1,10 +1,13 @@
 package org.gig.myplayrightapp.util;
 
 import lombok.extern.slf4j.Slf4j;
+import org.gig.myplayrightapp.dto.InsertPlayerDTO;
+import org.gig.myplayrightapp.service.PlayerService;
 
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.time.LocalDate;
 import java.util.Random;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -60,6 +63,45 @@ public class RegistrationDataUtils {
         } catch (IOException e) {
             log.error("❌ Failed to write user data to {}: {}", LOG_FILE, e.getMessage());
         }
+    }
+
+    public static InsertPlayerDTO generateUniqueInsertPlayerDTO(PlayerService playerService) {
+        InsertPlayerDTO dto;
+
+        do {
+            String email = generateNextEmail();
+            String dni = generateRandomDNI();
+            String userName = generateUniqueUsername();
+            String phoneNumber = generateRandomPhoneNumber();
+
+            dto = InsertPlayerDTO.builder()
+                    .firstName("test")
+                    .middleName("testtest")
+                    .lastName("testesttest")
+                    .gender(1)
+                    .birthDate(LocalDate.of(1990, 1, 21))
+                    .nationalId(dni)
+                    .email(email)
+                    .phone(phoneNumber)
+                    .address("carrer copernic 80")
+                    .state(277)
+                    .taxState(12)
+                    .city("ABELEDA")
+                    .zipCode("27513")
+                    .alias(userName)
+                    .password("Password1")
+                    .securityQuestion("Lugar de nacimiento de tu padre")
+                    .securityResponse("barcelona")
+                    .build();
+
+            log.info("🔍 Checking uniqueness: alias={}, email={}, phone={}, dni={}",
+                    dto.alias(), dto.email(), dto.phone(), dto.nationalId());
+
+        } while (playerService.existsAnyMatching(dto.alias(), dto.phone(), dto.nationalId(), dto.email()));
+
+        log.info("✅ Unique player to be inserted: {}", dto.email());
+
+        return dto;
     }
 
 }

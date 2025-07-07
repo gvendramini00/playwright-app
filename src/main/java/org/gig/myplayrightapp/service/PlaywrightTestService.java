@@ -12,7 +12,6 @@ import org.springframework.stereotype.Service;
 
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.time.LocalDate;
 import java.util.Arrays;
 import java.util.List;
 
@@ -151,39 +150,7 @@ public class PlaywrightTestService {
     public String testCase004RunManualRegisterTest() {
         log.info("✅ TestCase004 executed: Manual Registration (non-Veridas)");
 
-        InsertPlayerDTO dto;
-
-        // 🔁 Loop until we find unique values
-        do {
-            String email = RegistrationDataUtils.generateNextEmail();
-            String dni = RegistrationDataUtils.generateRandomDNI();
-            String userName = RegistrationDataUtils.generateUniqueUsername();
-            String phoneNumber = RegistrationDataUtils.generateRandomPhoneNumber();
-
-            dto = new InsertPlayerDTO(
-                    "test",                         // firstName
-                    "testtest",                     // middleName
-                    "testesttest",                  // lastName
-                    1,                              // gender (e.g., 1 = male)
-                    LocalDate.of(1990, 1, 21),      // birthDate
-                    dni,
-                    email,
-                    phoneNumber,
-                    "carrer copernic 80",           // address
-                    277,                            // state
-                    12,                             // taxState
-                    "ABELEDA",                      // city
-                    "27513",                        // zipCode
-                    userName,
-                    "Password1",
-                    "Lugar de nacimiento de tu padre",
-                    "barcelona"
-            );
-
-            log.info("🔍 Checking player uniqueness for: alias={}, email={}, phone={}, dni={}",
-                    dto.alias(), dto.email(), dto.phone(), dto.nationalId());
-
-        } while (playerService.existsAnyMatching(dto.alias(), dto.phone(), dto.nationalId(), dto.email()));
+        InsertPlayerDTO dto = RegistrationDataUtils.generateUniqueInsertPlayerDTO(playerService);
 
         log.info("✅ Unique player to be inserted: {}", dto.email());
 
