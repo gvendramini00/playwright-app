@@ -18,6 +18,8 @@ public interface PlayerRepository extends JpaRepository<Player, Long> {
 
     Optional<Player> findByNationalId(String nationalId);
 
+    Optional<Player> findTopByOrderByCreatedDateDesc();
+
     @Query("""
     SELECT CASE WHEN COUNT(p) > 0 THEN true ELSE false END
     FROM Player p

@@ -14,7 +14,7 @@ public class OpenApiConfig {
     public OpenAPI customOpenAPI() {
         return new OpenAPI()
                 .info(new Info()
-                        .title("MyPlayRightApp API")
+                        .title("GIG Automated Tests API")
                         .version("1.0.0")
                         .description("API for triggering Playwright test cases through HTTP endpoints.")
                         .contact(new Contact()

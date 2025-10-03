@@ -1,5 +1,9 @@
 package org.gig.myplayrightapp.service;
 
+import org.gig.myplayrightapp.dto.InsertPlayerDTO;
+
+import java.util.Optional;
+
 public interface PlayerService {
     /**
      * Checks if a player with the given alias exists.
@@ -34,5 +38,8 @@ public interface PlayerService {
      * @return {@code true} if any player exists with the provided alias, phone, national ID, or email; {@code false} otherwise
      */
     boolean existsAnyMatching(String alias, String phone, String nationalId, String email);
+
+    Optional<InsertPlayerDTO> findAnyExistingPlayer();
+
 
 }

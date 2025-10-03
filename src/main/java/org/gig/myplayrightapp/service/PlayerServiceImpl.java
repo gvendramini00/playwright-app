@@ -2,8 +2,11 @@ package org.gig.myplayrightapp.service;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.gig.myplayrightapp.dto.InsertPlayerDTO;
 import org.gig.myplayrightapp.repository.PlayerRepository;
 import org.springframework.stereotype.Service;
+
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -36,4 +39,29 @@ public class PlayerServiceImpl implements PlayerService {
     public boolean existsAnyMatching(String alias, String phone, String nationalId, String email) {
         return playerRepository.existsByAny(alias, phone, nationalId, email);
     }
+
+    @Override
+    public Optional<InsertPlayerDTO> findAnyExistingPlayer() {
+        return playerRepository.findTopByOrderByCreatedDateDesc()
+                .map(entity -> InsertPlayerDTO.builder()
+                        .firstName(entity.getFirstName())
+                        .middleName(entity.getMiddleName())
+                        .lastName(entity.getLastName())
+                        .gender(entity.getGender())
+                        .birthDate(entity.getBirthDate())
+                        .nationalId(entity.getNationalId())
+                        .email(entity.getEmail())
+                        .phone(entity.getPhone())
+                        .address(entity.getAddress())
+                        .state(entity.getState())
+                        .taxState(entity.getTaxState())
+                        .city(entity.getCity())
+                        .zipCode(entity.getZipCode())
+                        .alias(entity.getAlias())
+                        .password("Test123!") // dummy or safe default
+                        .securityQuestion("1") // example default question
+                        .securityResponse("duplicatedTest") // example response
+                        .build());
+    }
+
 }

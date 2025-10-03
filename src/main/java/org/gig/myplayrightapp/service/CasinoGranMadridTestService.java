@@ -4,23 +4,24 @@ import com.microsoft.playwright.*;
 import com.microsoft.playwright.options.AriaRole;
 import com.microsoft.playwright.options.HarContentPolicy;
 import com.microsoft.playwright.options.HarMode;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.gig.myplayrightapp.dto.InsertPlayerDTO;
 import org.gig.myplayrightapp.util.RegistrationDataUtils;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 
 @Slf4j
 @Service
-public class PlaywrightTestService {
+@RequiredArgsConstructor
+public class CasinoGranMadridTestService {
 
-    @Autowired
-    private PlayerService playerService;
+    private final PlayerService playerService;
 
     public String testCase001RunPreProdAccessTest() {
         log.info("✅ TestCase001 executed: Go to preprod site");
@@ -172,7 +173,7 @@ public class PlaywrightTestService {
             page.locator("#surname").fill(dto.lastName());
             page.getByText("Hombre").click();
             page.locator("#day").selectOption(String.valueOf(dto.birthDate().getDayOfMonth()));
-            page.locator("#month").selectOption(String.valueOf(dto.birthDate().getMonthValue() - 1)); // 0-indexed
+            page.locator("#month").selectOption(String.valueOf(dto.birthDate().getMonthValue()));
             page.locator("#year").selectOption(String.valueOf(dto.birthDate().getYear()));
             page.locator("#nationalId").fill(dto.nationalId());
             page.locator("#c19oldfalse").check();
@@ -208,7 +209,7 @@ public class PlaywrightTestService {
             page.getByRole(AriaRole.LINK, new Page.GetByRoleOptions().setName("Empezar"))
                     .click(new Locator.ClickOptions().setTimeout(10000));
 
-            page.waitForURL(url -> !url.equals(beforeSubmitUrl), new Page.WaitForURLOptions().setTimeout(5000));
+            page.waitForURL(url -> !url.equals(beforeSubmitUrl), new Page.WaitForURLOptions().setTimeout(10000));
 
             // 5. Check for visible errors
             Locator errorLocator = page.locator(".error, .text-danger, .invalid-feedback");
@@ -244,7 +245,6 @@ public class PlaywrightTestService {
             return "❌ TestCase004 failed: " + e.getMessage();
         }
     }
-
 
     public String testCase005RunInvalidNameRegistrationTest() {
         log.info("✅ TestCase005 executed: Registration with missing name");
@@ -288,6 +288,72 @@ public class PlaywrightTestService {
         } catch (Exception e) {
             log.error("❌ Error in TestCase005", e);
             return "❌ TestCase005 failed: " + e.getMessage();
+        }
+    }
+
+    public String testCase006RunDuplicatedRegisterTest() {
+        log.info("🧪 TestCase006: Manual Registration with duplicated user data");
+
+        Optional<InsertPlayerDTO> maybeExistingPlayer = playerService.findAnyExistingPlayer();
+        if (maybeExistingPlayer.isEmpty()) {
+            return "⚠️ TestCase006 skipped: No existing player found to duplicate.";
+        }
+
+        InsertPlayerDTO dto = maybeExistingPlayer.get();
+
+        try (Playwright playwright = Playwright.create()) {
+            Files.createDirectories(Paths.get("screenshots"));
+
+            Browser browser = playwright.chromium().launch(new BrowserType.LaunchOptions().setHeadless(false));
+            BrowserContext context = browser.newContext();
+            Page page = context.newPage();
+
+            page.navigate("https://casinogranmadridonline.pre.tecnalis.com/");
+            page.getByText("REGÍSTRATE").click();
+            page.getByRole(AriaRole.LINK, new Page.GetByRoleOptions().setName("REGISTRO MANUAL (~12 horas)")).click();
+
+            // Fill personal data until DNI/NIE
+            page.locator("#name").fill(dto.firstName());
+            page.locator("#middlename").fill(dto.middleName());
+            page.locator("#surname").fill(dto.lastName());
+            page.getByText("Hombre").click();
+            page.locator("#day").selectOption(String.valueOf(dto.birthDate().getDayOfMonth()));
+            page.locator("#month").selectOption(String.valueOf(dto.birthDate().getMonthValue() - 1));
+            page.locator("#year").selectOption(String.valueOf(dto.birthDate().getYear()));
+            page.locator("#nationalId").fill(dto.nationalId());
+            page.locator("#c19oldfalse").check();
+
+            // KEY: Click to trigger validation
+            page.getByRole(AriaRole.LINK, new Page.GetByRoleOptions().setName("Continuar")).click();
+
+            // Give time for modal or error to appear
+            page.waitForTimeout(3000);
+
+            Locator duplicateModal = page.locator(".error, .text-danger, .invalid-feedback, .ng-binding, .form-errors");
+
+            for (int i = 0; i < duplicateModal.count(); i++) {
+                if (duplicateModal.nth(i).isVisible()) {
+                    String text = duplicateModal.nth(i).innerText().trim();
+                    if (text.contains("DNI/NIE ya está en uso")) {
+                        String screenshotPath = "screenshots/testCase006_duplicate_dni_" + System.currentTimeMillis() + ".png";
+                        page.screenshot(new Page.ScreenshotOptions().setPath(Paths.get(screenshotPath)));
+                        log.info("✅ Duplicate DNI/NIE detected for user '{}' (DNI: {}). Screenshot saved: {}", dto.alias(), dto.nationalId(), screenshotPath);
+                        browser.close();
+                        return "✅ TestCase006 passed: Duplicate warning shown.";
+                    }
+                }
+            }
+
+            String failPath = "screenshots/testCase006_no_modal_" + System.currentTimeMillis() + ".png";
+            page.screenshot(new Page.ScreenshotOptions().setPath(Paths.get(failPath)));
+            log.warn("❌ Expected modal did not appear. Screenshot: {}", failPath);
+
+            browser.close();
+            return "❌ TestCase006 failed: Duplicate check did not trigger expected modal.";
+
+        } catch (Exception e) {
+            log.error("❌ Error in TestCase006", e);
+            return "❌ TestCase006 failed: " + e.getMessage();
         }
     }
 

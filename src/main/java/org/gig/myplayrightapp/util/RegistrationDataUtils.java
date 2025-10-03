@@ -2,6 +2,7 @@ package org.gig.myplayrightapp.util;
 
 import lombok.extern.slf4j.Slf4j;
 import org.gig.myplayrightapp.dto.InsertPlayerDTO;
+import org.gig.myplayrightapp.dto.InsertPlayerGpPtDTO;
 import org.gig.myplayrightapp.service.PlayerService;
 
 import java.io.FileWriter;
@@ -104,4 +105,90 @@ public class RegistrationDataUtils {
         return dto;
     }
 
+    public static InsertPlayerGpPtDTO generateUniquePortugalInsertPlayerDTO(PlayerService playerService) {
+        InsertPlayerGpPtDTO dto;
+        do {
+            String email = generateNextEmail();
+            String nif = generateRandomNIF();
+            String userName = generateUniqueUsername();
+            String phoneNumber = generateRandomPtMobile();
+            String ccNumber = generateCcNumberLike();
+
+            dto = InsertPlayerGpPtDTO.builder()
+                    .firstName("test")
+                    .middleName("testtest")
+                    .lastName("testesttest")
+                    .gender(1)
+                    .birthDate(LocalDate.of(1990, 1, 21))
+                    .nationalId(ccNumber)
+                    .email(email)
+                    .phone(phoneNumber)
+                    .address("rua primeiro da rua")
+                    .state(3515)
+                    .taxState(3515)
+                    .city("Horta")
+                    .zipCode("9900-023")
+                    .alias(userName)
+                    .password("Password1")
+                    .securityQuestion("1")
+                    .securityResponse("lisboa")
+                    .docTypeValue("2")
+                    .cuitCuil(nif)
+                    .phoneDialCode("+351")
+                    .phoneCountryLabel("Portugal")
+                    .build();
+
+            boolean exists = playerService.existsAnyMatching(dto.alias(), dto.phone(), dto.nationalId(), dto.email());
+            if (!exists) break;
+
+        } while (true);
+
+        log.info("✅[PT] Unique player to be inserted: {}", dto.email());
+        return dto;
+    }
+
+    /** Generate a valid Portuguese NIF (9 digits) using the official mod-11 check digit. */
+    public static String generateRandomNIF() {
+        // Common valid first digits in PT: 1,2,3,5,6,8,9 (covers individuals, companies, others)
+        int[] allowedFirst = {1, 2, 3, 5, 6, 8, 9};
+        int[] d = new int[9];
+        d[0] = allowedFirst[random.nextInt(allowedFirst.length)];
+        for (int i = 1; i < 8; i++) {
+            d[i] = random.nextInt(10);
+        }
+        // Check digit: 11 - (sum(d1*9 + d2*8 + ... + d8*2) % 11); if result >= 10 -> 0
+        int sum = 0;
+        int weight = 9;
+        for (int i = 0; i < 8; i++) {
+            sum += d[i] * (weight - i);
+        }
+        int check = 11 - (sum % 11);
+        if (check >= 10) check = 0;
+        d[8] = check;
+
+        StringBuilder nif = new StringBuilder(9);
+        for (int digit : d) nif.append(digit);
+        return nif.toString();
+    }
+
+    /** Portuguese mobile: 9 digits starting with 9. */
+    public static String generateRandomPtMobile() {
+        // Simple & valid-looking: 9XXXXXXXX
+        int rest = 100_000_000 + random.nextInt(900_000_000); // 9 digits
+        String s = String.valueOf(rest);
+        return "9" + s.substring(1); // ensure first digit is 9
+    }
+
+    /** Returns something like "12345678 3 AB 7" (format-only; no checksum guarantee). */
+    public static String generateCcNumberLike() {
+        String base8 = String.format("%08d", random.nextInt(100_000_000));
+        int d1 = random.nextInt(10);                 // first control digit (format-only)
+        char l1 = (char) ('A' + random.nextInt(26)); // letter 1
+        char l2 = (char) ('A' + random.nextInt(26)); // letter 2
+        int d2 = random.nextInt(10);                 // final digit (format-only)
+
+        // With spaces (common printing):
+        return base8 + " " + d1 + " " + l1 + l2 + " " + d2;
+        // If you need it compact (no spaces), return base8 + d1 + "" + l1 + l2 + d2;
+    }
 }
