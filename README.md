@@ -13,7 +13,24 @@ git clone https://github.com/<your-org>/my-playwright-app.git
 cd my-playwright-app
 ```
 
-### 2. Install Playwright Browsers
+### 2. Install Java 17:
+
+Download any Java 17 SDK (I used OpenJDK) and set it to be used in the project.
+
+
+### 3. Build Project with Maven
+
+You must build the project to get all dependencies and build the target folder:
+
+```bash
+mvn clean install
+```
+
+```bash
+mvn clean build
+```
+
+### 4. Install Playwright Browsers
 
 You must install the required browsers for Playwright:
 
@@ -85,6 +102,14 @@ Or, if that doesn't load:
 👉 [http://localhost:8080/swagger-ui/index.html](http://localhost:8080/swagger-ui/index.html)
 
 ---
+
+## 🌐 Accessing the Test Recorder
+
+### 1. Open Playwright recorder and add the URL you want to record from.
+
+```bash
+./mvnw exec:java -e -Dexec.mainClass=com.microsoft.playwright.CLI -Dexec.args="codegen https://your-site-url.com"
+```
 
 ## 💡 Notes
 
