@@ -26,17 +26,22 @@ public class AliraTestServiceImpl implements AliraTestService {
             BrowserContext context = browser.newContext();
             Page page = context.newPage();
 
-            log.info("Starting login test for user: {}", AliraVariables.USER_NAME.getValue());
-            page.navigate(AliraVariables.LOGIN_URL.getValue());
-            page.getByPlaceholder("User name").fill(AliraVariables.USER_NAME.getValue());
-            page.getByPlaceholder("Password").fill(AliraVariables.USER_PASSWORD.getValue());
+            String userName = AliraVariables.USER_NAME.getValue();
+            String userPassword = AliraVariables.USER_PASSWORD.getValue();
+            String loginUrl = AliraVariables.LOGIN_URL.getValue();
+            String screenshotPath = AliraVariables.SCREENSHOT_PATH.getValue();
+
+            log.info("Starting login test for user: {}", userName);
+            page.navigate(loginUrl);
+            page.getByPlaceholder("User name").fill(userName);
+            page.getByPlaceholder("Password").fill(userPassword);
             page.getByRole(AriaRole.LINK, new Page.GetByRoleOptions().setName("Sign in")).click();
             page.waitForSelector("text=Alira Dashboard", new Page.WaitForSelectorOptions().setState(WaitForSelectorState.ATTACHED).setTimeout(5000));
             page.waitForLoadState(LoadState.NETWORKIDLE);
-            page.screenshot(new Page.ScreenshotOptions().setPath(Paths.get(AliraVariables.SCREENSHOT_PATH.getValue() + "testCase001.png")).setFullPage(true));
+            page.screenshot(new Page.ScreenshotOptions().setPath(Paths.get(screenshotPath + "testCase001.png")).setFullPage(true));
 
-            log.info("Login successful for user: {}", AliraVariables.USER_NAME.getValue());
-            return String.format("✅ User %s logged in successfully.", AliraVariables.USER_NAME.getValue());
+            log.info("Login successful for user: {}", userName);
+            return String.format("✅ User %s logged in successfully.", userName);
 
         } catch (Exception e) {
             log.error("Login failed", e);

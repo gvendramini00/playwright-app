@@ -6,8 +6,8 @@ import lombok.RequiredArgsConstructor;
 @Getter
 @RequiredArgsConstructor
 public enum AliraVariables {
-    USER_NAME("gvendramini"),
-    USER_PASSWORD("56689272vG!"),
+    USER_NAME("spoza"),
+    USER_PASSWORD("Password1"),
     SCREENSHOT_PATH("screenshots/alira/"),
     ALIRA_DASHBOARD("Alira Dashboard"),
     ALIRA_PLAYER("test"),
