@@ -6,8 +6,6 @@ import lombok.RequiredArgsConstructor;
 @Getter
 @RequiredArgsConstructor
 public enum AliraVariables {
-    USER_NAME(""),
-    USER_PASSWORD(""),
     SCREENSHOT_PATH("screenshots/alira/"),
     ALIRA_DASHBOARD("Alira Dashboard"),
     ALIRA_PLAYER("test"),
@@ -17,8 +15,9 @@ public enum AliraVariables {
     ERR_NAV_BUT_GOT(" but got "),
     ERR_NAV_GENERAL("❌ Error during navigation: "),
     LOG_NAV_ERROR("Navigation Error"),
-    GAME_TAB(" Games"),
-    WEBSITE_TAB("\uF380 Website"),;
+    GAME_TAB(" Games"),
+    WEBSITE_TAB("\uF380 Website"),
+    CONFIGURATION_TAB("Configuration \uF3D0");
 
     private final String value;
 }

@@ -8,6 +8,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.gig.myplayrightapp.dto.InsertPlayerDTO;
 import org.gig.myplayrightapp.util.RegistrationDataUtils;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.nio.file.Files;
@@ -23,10 +24,13 @@ public class CasinoGranMadridTestService {
 
     private final PlayerService playerService;
 
+    @Value("${playwright.headless:true}")
+    private boolean headless;
+
     public String testCase001RunPreProdAccessTest() {
         log.info("✅ TestCase001 executed: Go to preprod site");
         try (Playwright playwright = Playwright.create()) {
-            Browser browser = playwright.chromium().launch(new BrowserType.LaunchOptions().setHeadless(true));
+            Browser browser = playwright.chromium().launch(new BrowserType.LaunchOptions().setHeadless(headless));
             Page page = browser.newPage();
             page.navigate("https://casinogranmadridonline.pre.tecnalis.com/");
             String title = page.title();
@@ -44,7 +48,7 @@ public class CasinoGranMadridTestService {
         try (Playwright playwright = Playwright.create()) {
             Files.createDirectories(Paths.get("screenshots"));
 
-            Browser browser = playwright.chromium().launch(new BrowserType.LaunchOptions().setHeadless(true));
+            Browser browser = playwright.chromium().launch(new BrowserType.LaunchOptions().setHeadless(headless));
             BrowserContext context = browser.newContext(new Browser.NewContextOptions()
                     .setRecordHarPath(Paths.get("browser/output.har"))
                     .setRecordHarContent(HarContentPolicy.EMBED)
@@ -54,30 +58,22 @@ public class CasinoGranMadridTestService {
 
             page.offConsoleMessage(consoleMessage -> log.error(consoleMessage.toString()));
 
-            // Navegar a una página para capturar las solicitudes
             page.navigate("https://casinogranmadridonline.pre.tecnalis.com/");
 
-            // 1. Click "REGÍSTRATE"
             page.getByText("REGÍSTRATE").click();
 
-            // 2. Wait for modal heading
             Locator heading = page.getByRole(AriaRole.HEADING, new Page.GetByRoleOptions().setName("Regístrate ahora."));
             heading.waitFor(new Locator.WaitForOptions().setTimeout(5000));
 
-            // Wait a bit to let modal animation/render finish
             page.waitForTimeout(1000);
 
-            // Now take the screenshot
             page.screenshot(new Page.ScreenshotOptions().setPath(Paths.get("screenshots/testCase002.png")));
 
-            // 4. Validate heading
             boolean headingVisible = heading.isVisible();
 
-            // 5. Close browser
             context.close();
             browser.close();
 
-            // 6. Return result
             return headingVisible
                     ? "✅ Registration modal loaded successfully: heading found"
                     : "❌ Registration modal did not appear";
@@ -95,7 +91,7 @@ public class CasinoGranMadridTestService {
             Files.createDirectories(Paths.get("screenshots"));
 
             Browser browser = playwright.chromium().launch(new BrowserType.LaunchOptions()
-                    .setHeadless(false)
+                    .setHeadless(headless)
                     .setArgs(Arrays.asList(
                             "--use-fake-ui-for-media-stream",
                             "--use-fake-device-for-media-stream"
@@ -119,23 +115,19 @@ public class CasinoGranMadridTestService {
             page.getByText("REGÍSTRATE").click();
             page.getByRole(AriaRole.LINK, new Page.GetByRoleOptions().setName("REGISTRO RÁPIDO (~30 segs, só")).click();
 
-            // Wait for iframe
             Locator iframeLocator = page.locator("#XpressID-iframe");
             iframeLocator.waitFor(new Locator.WaitForOptions().setTimeout(10000));
             FrameLocator iframe = page.frameLocator("#XpressID-iframe");
 
-            // Click "Start"
             Locator startButton = iframe.getByRole(AriaRole.BUTTON, new FrameLocator.GetByRoleOptions().setName("Start"));
             startButton.waitFor(new Locator.WaitForOptions().setTimeout(15000));
             startButton.click();
             log.info("✅ Clicked 'Start' inside iframe");
 
-            // ✅ Wait for camera validation text
             Locator capturePrompt = iframe.getByText("Fit the FRONT of the document");
             capturePrompt.waitFor(new Locator.WaitForOptions().setTimeout(15000));
             log.info("✅ Camera and document capture prompt visible");
 
-            // Screenshot
             page.waitForTimeout(1500);
             page.screenshot(new Page.ScreenshotOptions().setPath(Paths.get("screenshots/testCase003.png")));
 
@@ -158,16 +150,14 @@ public class CasinoGranMadridTestService {
         try (Playwright playwright = Playwright.create()) {
             Files.createDirectories(Paths.get("screenshots"));
 
-            Browser browser = playwright.chromium().launch(new BrowserType.LaunchOptions().setHeadless(false));
+            Browser browser = playwright.chromium().launch(new BrowserType.LaunchOptions().setHeadless(headless));
             BrowserContext context = browser.newContext();
             Page page = context.newPage();
 
-            // 1. Navigate & open manual registration form
             page.navigate("https://casinogranmadridonline.pre.tecnalis.com/");
             page.getByText("REGÍSTRATE").click();
             page.getByRole(AriaRole.LINK, new Page.GetByRoleOptions().setName("REGISTRO MANUAL (~12 horas)")).click();
 
-            // 2. Fill personal info
             page.locator("#name").fill(dto.firstName());
             page.locator("#middlename").fill(dto.middleName());
             page.locator("#surname").fill(dto.lastName());
@@ -179,7 +169,6 @@ public class CasinoGranMadridTestService {
             page.locator("#c19oldfalse").check();
             page.getByRole(AriaRole.LINK, new Page.GetByRoleOptions().setName("Continuar")).click();
 
-            // 3. Fill contact info
             page.locator("#e_mail").fill(dto.email());
             page.locator("#re_mail").fill(dto.email());
             page.locator("#phoneInput").fill(dto.phone());
@@ -190,18 +179,15 @@ public class CasinoGranMadridTestService {
             page.locator("#zipCode_select").selectOption(dto.zipCode());
             page.getByRole(AriaRole.LINK, new Page.GetByRoleOptions().setName("Seguir")).click();
 
-            // 4. Fill account credentials
             Locator userField = page.locator("#user");
             userField.waitFor(new Locator.WaitForOptions().setTimeout(10000));
             userField.fill(dto.alias());
             page.locator("#pwdField").fill(dto.password());
             page.locator("#re_password").fill(dto.password());
 
-            // Security question and response
             page.locator("#securityQuestion").selectOption(dto.securityQuestion());
             page.locator("#securityResponse").fill(dto.securityResponse());
 
-            // Accept checkboxes
             page.locator("input[name=\"c18old\"]").check();
             page.locator("#subscription1").check();
 
@@ -211,7 +197,6 @@ public class CasinoGranMadridTestService {
 
             page.waitForURL(url -> !url.equals(beforeSubmitUrl), new Page.WaitForURLOptions().setTimeout(10000));
 
-            // 5. Check for visible errors
             Locator errorLocator = page.locator(".error, .text-danger, .invalid-feedback");
             if (errorLocator.count() > 0) {
                 for (int i = 0; i < errorLocator.count(); i++) {
@@ -224,14 +209,12 @@ public class CasinoGranMadridTestService {
                 }
             }
 
-            // 6. Validate the page advanced
             if (page.url().equals(beforeSubmitUrl)) {
                 String failPath = "screenshots/testCase004_failed_no_redirect_" + System.currentTimeMillis() + ".png";
                 page.screenshot(new Page.ScreenshotOptions().setPath(Paths.get(failPath)));
                 throw new RuntimeException("❌ Registration failed: Page did not proceed after submitting.");
             }
 
-            // 7. Screenshot success
             String screenshotPath = "screenshots/testCase004_" + System.currentTimeMillis() + ".png";
             page.screenshot(new Page.ScreenshotOptions().setPath(Paths.get(screenshotPath)));
 
@@ -252,31 +235,24 @@ public class CasinoGranMadridTestService {
         try (Playwright playwright = Playwright.create()) {
             Files.createDirectories(Paths.get("screenshots"));
 
-            Browser browser = playwright.chromium().launch(new BrowserType.LaunchOptions()
-                    .setHeadless(false)
-            );
-
+            Browser browser = playwright.chromium().launch(new BrowserType.LaunchOptions().setHeadless(headless));
             BrowserContext context = browser.newContext();
             Page page = context.newPage();
 
-            // Step 1: Open registration form
             page.navigate("https://casinogranmadridonline.pre.tecnalis.com/");
             page.getByText("REGÍSTRATE").click();
             page.getByRole(AriaRole.LINK, new Page.GetByRoleOptions().setName("REGISTRO MANUAL (~12 horas)")).click();
 
-            // Step 2: Try to continue without filling the name
-            page.locator("#surname").click(); // force blur from #name
-            String currentURL = page.url(); // capture current step URL
+            page.locator("#surname").click();
+            String currentURL = page.url();
 
             page.getByRole(AriaRole.LINK, new Page.GetByRoleOptions().setName("Continuar")).click();
-            page.waitForTimeout(1000); // allow time for error to show
+            page.waitForTimeout(1000);
 
             String afterClickURL = page.url();
 
-            // Screenshot regardless of result
             page.screenshot(new Page.ScreenshotOptions().setPath(Paths.get("screenshots/testCase005.png")));
 
-            // Check if page did not advance
             if (currentURL.equals(afterClickURL)) {
                 log.info("✅ Page did not advance. Validation likely triggered.");
                 return "✅ Validation succeeded: Page remained on step 1 (missing name)";
@@ -304,7 +280,7 @@ public class CasinoGranMadridTestService {
         try (Playwright playwright = Playwright.create()) {
             Files.createDirectories(Paths.get("screenshots"));
 
-            Browser browser = playwright.chromium().launch(new BrowserType.LaunchOptions().setHeadless(false));
+            Browser browser = playwright.chromium().launch(new BrowserType.LaunchOptions().setHeadless(headless));
             BrowserContext context = browser.newContext();
             Page page = context.newPage();
 
@@ -312,7 +288,6 @@ public class CasinoGranMadridTestService {
             page.getByText("REGÍSTRATE").click();
             page.getByRole(AriaRole.LINK, new Page.GetByRoleOptions().setName("REGISTRO MANUAL (~12 horas)")).click();
 
-            // Fill personal data until DNI/NIE
             page.locator("#name").fill(dto.firstName());
             page.locator("#middlename").fill(dto.middleName());
             page.locator("#surname").fill(dto.lastName());
@@ -323,10 +298,8 @@ public class CasinoGranMadridTestService {
             page.locator("#nationalId").fill(dto.nationalId());
             page.locator("#c19oldfalse").check();
 
-            // KEY: Click to trigger validation
             page.getByRole(AriaRole.LINK, new Page.GetByRoleOptions().setName("Continuar")).click();
 
-            // Give time for modal or error to appear
             page.waitForTimeout(3000);
 
             Locator duplicateModal = page.locator(".error, .text-danger, .invalid-feedback, .ng-binding, .form-errors");
@@ -356,5 +329,4 @@ public class CasinoGranMadridTestService {
             return "❌ TestCase006 failed: " + e.getMessage();
         }
     }
-
 }

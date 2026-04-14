@@ -9,7 +9,7 @@ import org.gig.myplayrightapp.dto.InsertPlayerDTO;
 import org.gig.myplayrightapp.dto.InsertPlayerGpPtDTO;
 import org.gig.myplayrightapp.enums.Brand;
 import org.gig.myplayrightapp.util.RegistrationDataUtils;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.nio.file.Files;
@@ -25,6 +25,9 @@ public class GoldenParkPtTestService {
 
     private final PlayerService playerService;
 
+    @Value("${playwright.headless:true}")
+    private boolean headless;
+
     private static final String BASE_URL = "https://goldenpark-pt.dev.tecnalis.com/";
     private static final String SHOTS_DIR = "screenshots";
 
@@ -35,7 +38,7 @@ public class GoldenParkPtTestService {
         try (Playwright pw = Playwright.create()) {
             Files.createDirectories(Paths.get(SHOTS_DIR));
 
-            Browser browser = pw.chromium().launch(new BrowserType.LaunchOptions().setHeadless(false));
+            Browser browser = pw.chromium().launch(new BrowserType.LaunchOptions().setHeadless(headless));
             BrowserContext ctx = browser.newContext();
             Page page = ctx.newPage();
 
@@ -55,11 +58,9 @@ public class GoldenParkPtTestService {
             if (page.locator("#docType").isVisible() && dto.docTypeValue() != null) {
                 page.locator("#docType").selectOption(dto.docTypeValue());
             }
-            // NIF -> #cuitCuil
             if (page.locator("#cuitCuil").isVisible() && dto.cuitCuil() != null) {
                 page.locator("#cuitCuil").fill(dto.cuitCuil());
             }
-            // CC -> #nationalId
             page.locator("#nationalId").fill(dto.nationalId());
 
             page.locator("#name").fill(dto.firstName());
@@ -67,7 +68,7 @@ public class GoldenParkPtTestService {
             page.getByText("Homem").click();
             page.locator("#step2").getByText(Pattern.compile("CONTINUAR", Pattern.CASE_INSENSITIVE)).click();
 
-            // Step 3 (birth / extras if present)
+            // Step 3
             page.locator("#step3").getByText(Pattern.compile("CONTINUAR", Pattern.CASE_INSENSITIVE)).click();
 
             // Address / phone
@@ -76,7 +77,6 @@ public class GoldenParkPtTestService {
             page.locator("#city_select").selectOption(dto.city());
             page.locator("#zipcode_select").selectOption(dto.zipCode());
 
-            // Phone country (ensure Portugal stays selected)
             if (dto.phoneCountryLabel() != null) {
                 page.getByRole(AriaRole.COMBOBOX,
                                 new Page.GetByRoleOptions().setName(Pattern.compile("Portugal|País|Country", Pattern.CASE_INSENSITIVE)))
@@ -84,7 +84,6 @@ public class GoldenParkPtTestService {
                 page.getByText(Pattern.compile(dto.phoneCountryLabel(), Pattern.CASE_INSENSITIVE)).click();
             }
 
-            // Phone number
             page.getByRole(AriaRole.TEXTBOX,
                             new Page.GetByRoleOptions().setName(Pattern.compile("Telem(ó|o)vel\\*", Pattern.CASE_INSENSITIVE)))
                     .fill(dto.phone());
@@ -135,7 +134,7 @@ public class GoldenParkPtTestService {
         try (Playwright pw = Playwright.create()) {
             Files.createDirectories(Paths.get(SHOTS_DIR));
 
-            Browser browser = pw.chromium().launch(new BrowserType.LaunchOptions().setHeadless(false));
+            Browser browser = pw.chromium().launch(new BrowserType.LaunchOptions().setHeadless(headless));
             BrowserContext ctx = browser.newContext();
             Page page = ctx.newPage();
 
@@ -145,7 +144,6 @@ public class GoldenParkPtTestService {
                             new Page.GetByRoleOptions().setName(Pattern.compile("Reg(í|i)strate|Registar|Registar-se", Pattern.CASE_INSENSITIVE)))
                     .click();
 
-            // Minimal required fields to reach the NIF validation
             page.locator("#name").fill(es.firstName());
             page.locator("#middlename").fill(es.middleName());
             page.locator("#surname").fill(es.lastName());
@@ -153,8 +151,6 @@ public class GoldenParkPtTestService {
 
             if (page.locator("#docType").isVisible()) page.locator("#docType").selectOption("2");
 
-            // 🔴 NIF -> #cuitCuil (use a known duplicate NIF if possible)
-            // For a quick try, reuse es.nationalId(); ideally, fetch/keep a real duplicate NIF from GP DB.
             page.locator("#cuitCuil").fill(es.nationalId());
 
             page.locator("#step2, #step1, body").getByText(Pattern.compile("CONTINUAR", Pattern.CASE_INSENSITIVE))
@@ -187,5 +183,4 @@ public class GoldenParkPtTestService {
             return "❌ GP PT duplicate test error: " + e.getMessage();
         }
     }
-
 }
