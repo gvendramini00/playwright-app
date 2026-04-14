@@ -39,4 +39,16 @@ public class AliraNavigateTabMarketingController {
     public String testCase015() {
         return aliraNavigateTabMarketingService.testCase015CreateDepositPromotionTest();
     }
+
+    @Operation(summary = "Test Case 016 - Edit the first Deposit Promotion in the list and verify the update")
+    @GetMapping("/testCase016")
+    public String testCase016() {
+        return aliraNavigateTabMarketingService.testCase016EditDepositPromotionTest();
+    }
+
+    @Operation(summary = "Test Case 017 - Delete the first Deposit Promotion and verify removal")
+    @GetMapping("/testCase017")
+    public String testCase017() {
+        return aliraNavigateTabMarketingService.testCase017DeleteDepositPromotionTest();
+    }
 }

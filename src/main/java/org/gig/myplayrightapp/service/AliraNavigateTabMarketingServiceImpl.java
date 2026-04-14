@@ -12,6 +12,9 @@ import org.springframework.stereotype.Service;
 
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.time.LocalDate;
+import java.time.format.TextStyle;
+import java.util.Locale;
 
 import static org.gig.myplayrightapp.enums.AliraVariables.*;
 
@@ -252,6 +255,143 @@ public class AliraNavigateTabMarketingServiceImpl implements AliraNavigateTabMar
 
         } catch (Exception e) {
             log.error("❌ Error in testCase015", e);
+            return ERR_NAV_GENERAL.getValue() + e.getMessage();
+        }
+    }
+
+    @Override
+    public String testCase016EditDepositPromotionTest() {
+        try (Playwright playwright = Playwright.create();
+             Browser browser = playwright.chromium().launch(new BrowserType.LaunchOptions().setHeadless(headless))) {
+            Files.createDirectories(Paths.get(SCREENSHOT_PATH.getValue()));
+            BrowserContext context = browser.newContext();
+            Page page = context.newPage();
+
+            aliraLoginUtil.login(page);
+
+            // Navigate to Deposit Promotions
+            page.getByRole(AriaRole.LINK, new Page.GetByRoleOptions().setName(MARKETING_TAB.getValue())).click();
+            page.getByRole(AriaRole.LINK, new Page.GetByRoleOptions().setName(BONUS_TAB.getValue())).click();
+            page.getByRole(AriaRole.LINK, new Page.GetByRoleOptions().setName(DEPOSIT_PROMOTIONS_TAB.getValue())).click();
+            page.waitForLoadState(LoadState.NETWORKIDLE);
+
+            // Search for promotions containing "_edit"
+            Locator searchBox = page.getByPlaceholder("Search").nth(1);
+            searchBox.click();
+            searchBox.fill("_edit");
+            page.waitForLoadState(LoadState.NETWORKIDLE);
+
+            // Click the edit link on the first result
+            Locator firstRow = page.locator("table tbody tr").first();
+            firstRow.waitFor(new Locator.WaitForOptions().setTimeout(10000));
+            firstRow.locator("a").first().click();
+
+            // Wait for the edit modal to open and for the name field to be populated
+            Locator nameField = page.locator("#dprName");
+            nameField.waitFor(new Locator.WaitForOptions().setTimeout(10000));
+            page.waitForFunction("document.querySelector('#dprName').value.trim().length > 0");
+            String originalName = nameField.inputValue();
+            LocalDate today = LocalDate.now();
+            String updatedName = "test_edit" + today.getMonth().getDisplayName(TextStyle.FULL, Locale.ENGLISH) + "_" + today.getDayOfMonth();
+
+            log.info("Editing deposit promotion: '{}' → '{}'", originalName, updatedName);
+
+            // Update the name
+            nameField.click();
+            nameField.fill(updatedName);
+
+            // Save
+            page.locator("#saveDepositPromo").click();
+            page.waitForLoadState(LoadState.NETWORKIDLE);
+
+            // Close the modal
+            page.locator("#DepositPromoEditModal").getByLabel("Close").click();
+            page.waitForLoadState(LoadState.NETWORKIDLE);
+
+            // Verify updated name appears in the table
+            Locator updatedCell = page.getByRole(AriaRole.GRIDCELL, new Page.GetByRoleOptions().setName(updatedName));
+            boolean nameVisible = updatedCell.count() > 0 && updatedCell.first().isVisible();
+
+            String screenshotPath = SCREENSHOT_PATH.getValue() + "testCase016_" + System.currentTimeMillis() + ".png";
+            page.screenshot(new Page.ScreenshotOptions()
+                    .setPath(Paths.get(screenshotPath))
+                    .setFullPage(true));
+
+            if (nameVisible) {
+                log.info("✅ Deposit promotion renamed '{}' → '{}'. Screenshot: {}", originalName, updatedName, screenshotPath);
+                return "✅ Deposit promotion updated: '" + originalName + "' → '" + updatedName + "'.";
+            } else {
+                log.warn("❌ Updated name '{}' not found in table after save. Screenshot: {}", updatedName, screenshotPath);
+                return "❌ Save appeared to succeed but updated name '" + updatedName + "' not found in table. Check screenshot: " + screenshotPath;
+            }
+
+        } catch (Exception e) {
+            log.error("❌ Error in testCase016", e);
+            return ERR_NAV_GENERAL.getValue() + e.getMessage();
+        }
+    }
+
+    @Override
+    public String testCase017DeleteDepositPromotionTest() {
+        try (Playwright playwright = Playwright.create();
+             Browser browser = playwright.chromium().launch(new BrowserType.LaunchOptions().setHeadless(headless))) {
+            Files.createDirectories(Paths.get(SCREENSHOT_PATH.getValue()));
+            BrowserContext context = browser.newContext();
+            Page page = context.newPage();
+
+            aliraLoginUtil.login(page);
+
+            // Navigate to Deposit Promotions
+            page.getByRole(AriaRole.LINK, new Page.GetByRoleOptions().setName(MARKETING_TAB.getValue())).click();
+            page.getByRole(AriaRole.LINK, new Page.GetByRoleOptions().setName(BONUS_TAB.getValue())).click();
+            page.getByRole(AriaRole.LINK, new Page.GetByRoleOptions().setName(DEPOSIT_PROMOTIONS_TAB.getValue())).click();
+            page.waitForLoadState(LoadState.NETWORKIDLE);
+
+            // Read the ID of the first row before deleting
+            Locator firstRow = page.locator("table tbody tr").first();
+            firstRow.waitFor(new Locator.WaitForOptions().setTimeout(10000));
+            String deletedId = firstRow.locator("td").nth(1).innerText().trim();
+
+            // Click the delete button (second link, nth(1)) on the first row
+            firstRow.locator("a").nth(1).click();
+
+            // Confirm deletion in the modal
+            page.locator("#DeleteDepositPromoModal")
+                    .getByText("Delete", new Locator.GetByTextOptions().setExact(true))
+                    .click();
+            page.waitForLoadState(LoadState.NETWORKIDLE);
+
+            // Search by the deleted ID to verify it no longer exists
+            Locator searchBox = page.getByPlaceholder("Search").first();
+            searchBox.click();
+            searchBox.fill(deletedId);
+            page.waitForLoadState(LoadState.NETWORKIDLE);
+
+            // Check if any ID cell exactly matches the deleted ID
+            Locator idCells = page.locator("table tbody tr td:nth-child(2)");
+            boolean stillExists = false;
+            for (int i = 0; i < idCells.count(); i++) {
+                if (idCells.nth(i).innerText().trim().equals(deletedId)) {
+                    stillExists = true;
+                    break;
+                }
+            }
+
+            String screenshotPath = SCREENSHOT_PATH.getValue() + "testCase017_" + System.currentTimeMillis() + ".png";
+            page.screenshot(new Page.ScreenshotOptions()
+                    .setPath(Paths.get(screenshotPath))
+                    .setFullPage(true));
+
+            if (!stillExists) {
+                log.info("✅ Deposit promotion ID '{}' deleted successfully. Screenshot: {}", deletedId, screenshotPath);
+                return "✅ Deposit promotion ID '" + deletedId + "' deleted successfully.";
+            } else {
+                log.warn("❌ Deposit promotion ID '{}' still visible after deletion. Screenshot: {}", deletedId, screenshotPath);
+                return "❌ Deletion failed: ID '" + deletedId + "' still present in table. Check screenshot: " + screenshotPath;
+            }
+
+        } catch (Exception e) {
+            log.error("❌ Error in testCase017", e);
             return ERR_NAV_GENERAL.getValue() + e.getMessage();
         }
     }

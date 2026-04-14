@@ -140,6 +140,8 @@ Base URL: `http://localhost:8080/api/test/`
 | `GET /api/test/alira/navigation/marketing/testCase013` | Navigate → Marketing → Bonus → Deposit Promotions — verify table has data |
 | `GET /api/test/alira/navigation/marketing/testCase014` | Navigate → Marketing → Bonus → Deposit Promotions → click New — verify modal appears |
 | `GET /api/test/alira/navigation/marketing/testCase015` | Navigate → Marketing → Bonus → Deposit Promotions → create a new deposit promotion |
+| `GET /api/test/alira/navigation/marketing/testCase016` | Navigate → Marketing → Bonus → Deposit Promotions → edit the first row and verify the update |
+| `GET /api/test/alira/navigation/marketing/testCase017` | Navigate → Marketing → Bonus → Deposit Promotions → delete the first row and verify removal |
 
 ### Casino Gran Madrid (CGM)
 

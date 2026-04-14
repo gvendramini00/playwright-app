@@ -5,4 +5,6 @@ public interface AliraNavigateTabMarketingService {
     String testCase013NavigateMarketingBonusDepositPromotionsTest();
     String testCase014NavigateMarketingBonusDepositPromotionsNewModalTest();
     String testCase015CreateDepositPromotionTest();
+    String testCase016EditDepositPromotionTest();
+    String testCase017DeleteDepositPromotionTest();
 }
