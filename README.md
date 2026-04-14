@@ -79,8 +79,14 @@ mvn clean package -DskipTests
 
 ### 4. Install Playwright browsers
 
+**PowerShell (Windows):**
+```powershell
+./mvnw exec:java "-Dexec.mainClass=com.microsoft.playwright.CLI" "-Dexec.args=install --with-deps chromium"
+```
+
+**Bash / Linux / macOS:**
 ```bash
-mvn exec:java -Dexec.mainClass=com.microsoft.playwright.CLI -Dexec.args="install --with-deps chromium"
+./mvnw exec:java -Dexec.mainClass=com.microsoft.playwright.CLI -Dexec.args="install --with-deps chromium"
 ```
 
 This downloads the Chromium binary used by all tests. Run once after cloning.
@@ -121,15 +127,19 @@ Base URL: `http://localhost:8080/api/test/`
 |----------|-------------|
 | `GET /api/test/alira/testCase001` | Login to Alira Back Office |
 | `GET /api/test/alira/testCase002` | Navigate to Player Profile |
-| `GET /api/test/alira/games/testCase003` | Navigate → Games → Rooms |
-| `GET /api/test/alira/games/testCase004` | Navigate → Games → Process Rooms |
-| `GET /api/test/alira/games/testCase005` | Navigate → Games → Lobby Rooms |
-| `GET /api/test/alira/games/testCase006` | Navigate → Games → Providers |
-| `GET /api/test/alira/games/testCase007` | Navigate → Games → Themes & Tags |
-| `GET /api/test/alira/games/testCase008` | Navigate → Games → Exchange Profile |
-| `GET /api/test/alira/website/testCase009` | Navigate → Website → CMS |
-| `GET /api/test/alira/website/testCase010` | Navigate → Website → Configuration → CMS Access |
-| `GET /api/test/alira/website/testCase011` | Navigate → Website → Configuration → Constants |
+| `GET /api/test/alira/navigation/games/testCase003` | Navigate → Games → Rooms |
+| `GET /api/test/alira/navigation/games/testCase004` | Navigate → Games → Process Rooms |
+| `GET /api/test/alira/navigation/games/testCase005` | Navigate → Games → Lobby Rooms |
+| `GET /api/test/alira/navigation/games/testCase006` | Navigate → Games → Providers |
+| `GET /api/test/alira/navigation/games/testCase007` | Navigate → Games → Themes & Tags |
+| `GET /api/test/alira/navigation/games/testCase008` | Navigate → Games → Exchange Profile |
+| `GET /api/test/alira/navigation/website/testCase009` | Navigate → Website → CMS |
+| `GET /api/test/alira/navigation/website/testCase010` | Navigate → Website → Configuration → CMS Access |
+| `GET /api/test/alira/navigation/website/testCase011` | Navigate → Website → Configuration → Constants |
+| `GET /api/test/alira/navigation/marketing/testCase012` | Navigate → Dashboard — verify table has data |
+| `GET /api/test/alira/navigation/marketing/testCase013` | Navigate → Marketing → Bonus → Deposit Promotions — verify table has data |
+| `GET /api/test/alira/navigation/marketing/testCase014` | Navigate → Marketing → Bonus → Deposit Promotions → click New — verify modal appears |
+| `GET /api/test/alira/navigation/marketing/testCase015` | Navigate → Marketing → Bonus → Deposit Promotions → create a new deposit promotion |
 
 ### Casino Gran Madrid (CGM)
 
@@ -176,10 +186,16 @@ Successful registration tests log the created user to `generated-users.csv` (ema
 
 ## Recording New Tests
 
-Use the Playwright code generator to record interactions on any page:
+Use the Playwright code generator to record interactions on any page.
 
+**PowerShell (Windows):**
+```powershell
+./mvnw exec:java "-Dexec.mainClass=com.microsoft.playwright.CLI" "-Dexec.args=codegen https://your-site-url.com"
+```
+
+**Bash / Linux / macOS:**
 ```bash
-./mvnw exec:java -e -Dexec.mainClass=com.microsoft.playwright.CLI -Dexec.args="codegen https://your-site-url.com"
+./mvnw exec:java -Dexec.mainClass=com.microsoft.playwright.CLI -Dexec.args="codegen https://your-site-url.com"
 ```
 
 ---
