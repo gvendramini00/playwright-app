@@ -213,6 +213,8 @@ public class AliraNavigateTabMarketingServiceImpl implements AliraNavigateTabMar
             // Select AND ALSO player selected
             page.locator("#promo_selection_div button").click();
             page.getByRole(AriaRole.LISTBOX)
+                    .waitFor(new Locator.WaitForOptions().setTimeout(10000));
+            page.getByRole(AriaRole.LISTBOX)
                     .getByRole(AriaRole.OPTION, new Locator.GetByRoleOptions().setName("Any"))
                     .click();
             // Wait for the dropdown to close before continuing

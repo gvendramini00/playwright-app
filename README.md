@@ -125,6 +125,7 @@ Base URL: `http://localhost:8080/api/test/`
 
 | Endpoint | Description |
 |----------|-------------|
+| `GET /api/test/alira/mass/run-all` | **Run all 17 Alira tests and download an Excel report** |
 | `GET /api/test/alira/testCase001` | Login to Alira Back Office |
 | `GET /api/test/alira/testCase002` | Navigate to Player Profile |
 | `GET /api/test/alira/navigation/games/testCase003` | Navigate → Games → Rooms |

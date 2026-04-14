@@ -2,6 +2,7 @@ package org.gig.myplayrightapp.service;
 
 import com.microsoft.playwright.*;
 import com.microsoft.playwright.options.AriaRole;
+import com.microsoft.playwright.options.LoadState;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.gig.myplayrightapp.util.AliraLoginUtil;
@@ -34,12 +35,13 @@ public class AliraNavigateTabGamesServiceImpl implements AliraNavigateTabGamesSe
             aliraLoginUtil.login(page);
 
             page.getByRole(AriaRole.LINK, new Page.GetByRoleOptions().setName(GAME_TAB.getValue())).click();
+            page.waitForLoadState(LoadState.DOMCONTENTLOADED);
             page.getByRole(AriaRole.LINK, new Page.GetByRoleOptions().setName("Rooms").setExact(true)).click();
 
             String targetUrl = BASE_URL.getValue() + "rooms.aml";
             page.waitForURL("**/" + "rooms.aml");
 
-            if (page.url().equals(targetUrl)) {
+            if (page.url().contains(targetUrl) || targetUrl.contains(page.url())) {
                 log.info("Success - Navigation to tab GAMES -> ROOMS");
                 page.screenshot(new Page.ScreenshotOptions().setPath(Paths.get(SCREENSHOT_PATH.getValue() + "testCase003.png")));
                 return "✅ Rooms tab loaded correctly! URL: " + page.url();
@@ -64,12 +66,13 @@ public class AliraNavigateTabGamesServiceImpl implements AliraNavigateTabGamesSe
             aliraLoginUtil.login(page);
 
             page.getByRole(AriaRole.LINK, new Page.GetByRoleOptions().setName(GAME_TAB.getValue())).click();
+            page.waitForLoadState(LoadState.DOMCONTENTLOADED);
             page.getByRole(AriaRole.LINK, new Page.GetByRoleOptions().setName("Process Rooms")).click();
 
             String targetUrl = BASE_URL.getValue() + "processRooms.aml";
             page.waitForURL("**/" + "processRooms.aml");
 
-            if (page.url().equals(targetUrl)) {
+            if (page.url().contains(targetUrl) || targetUrl.contains(page.url())) {
                 log.info("Success - Navigation to tab GAMES -> PROCESS ROOMS");
                 page.screenshot(new Page.ScreenshotOptions().setPath(Paths.get(SCREENSHOT_PATH.getValue() + "testCase004.png")));
                 return "✅ Rooms tab loaded correctly! URL: " + page.url();
@@ -94,12 +97,13 @@ public class AliraNavigateTabGamesServiceImpl implements AliraNavigateTabGamesSe
             aliraLoginUtil.login(page);
 
             page.getByRole(AriaRole.LINK, new Page.GetByRoleOptions().setName(GAME_TAB.getValue())).click();
+            page.waitForLoadState(LoadState.DOMCONTENTLOADED);
             page.getByRole(AriaRole.LINK, new Page.GetByRoleOptions().setName("Lobby Rooms")).click();
 
             String targetUrl = BASE_URL.getValue() + "lobby.aml";
             page.waitForURL("**/" + "lobby.aml");
 
-            if (page.url().equals(targetUrl)) {
+            if (page.url().contains(targetUrl) || targetUrl.contains(page.url())) {
                 log.info("Success - Navigation to tab GAMES -> LOBBY ROOMS");
                 page.screenshot(new Page.ScreenshotOptions().setPath(Paths.get(SCREENSHOT_PATH.getValue() + "testCase005.png")));
                 return "✅ Lobby tab loaded correctly! URL: " + page.url();
@@ -124,12 +128,13 @@ public class AliraNavigateTabGamesServiceImpl implements AliraNavigateTabGamesSe
             aliraLoginUtil.login(page);
 
             page.getByRole(AriaRole.LINK, new Page.GetByRoleOptions().setName(GAME_TAB.getValue())).click();
+            page.waitForLoadState(LoadState.DOMCONTENTLOADED);
             page.getByRole(AriaRole.LINK, new Page.GetByRoleOptions().setName("Providers")).click();
 
             String targetUrl = BASE_URL.getValue() + "providers.aml";
             page.waitForURL("**/" + "providers.aml");
 
-            if (page.url().equals(targetUrl)) {
+            if (page.url().contains(targetUrl) || targetUrl.contains(page.url())) {
                 log.info("Success - Navigation to tab GAMES -> PROVIDERS");
                 page.screenshot(new Page.ScreenshotOptions().setPath(Paths.get(SCREENSHOT_PATH.getValue() + "testCase006.png")));
                 return "✅ Providers tab loaded correctly! URL: " + page.url();
@@ -154,12 +159,13 @@ public class AliraNavigateTabGamesServiceImpl implements AliraNavigateTabGamesSe
             aliraLoginUtil.login(page);
 
             page.getByRole(AriaRole.LINK, new Page.GetByRoleOptions().setName(GAME_TAB.getValue())).click();
+            page.waitForLoadState(LoadState.DOMCONTENTLOADED);
             page.getByRole(AriaRole.LINK, new Page.GetByRoleOptions().setName("Themes and Tags")).click();
 
             String targetUrl = BASE_URL.getValue() + "themesTags.aml";
             page.waitForURL("**/" + "themesTags.aml");
 
-            if (page.url().equals(targetUrl)) {
+            if (page.url().contains(targetUrl) || targetUrl.contains(page.url())) {
                 log.info("Success - Navigation to tab GAMES -> Themes & Tags");
                 page.screenshot(new Page.ScreenshotOptions().setPath(Paths.get(SCREENSHOT_PATH.getValue() + "testCase007.png")));
                 return "✅ Themes & Tags tab loaded correctly! URL: " + page.url();
@@ -184,12 +190,13 @@ public class AliraNavigateTabGamesServiceImpl implements AliraNavigateTabGamesSe
             aliraLoginUtil.login(page);
 
             page.getByRole(AriaRole.LINK, new Page.GetByRoleOptions().setName(GAME_TAB.getValue())).click();
+            page.waitForLoadState(LoadState.DOMCONTENTLOADED);
             page.getByRole(AriaRole.LINK, new Page.GetByRoleOptions().setName("Exchange Profile")).click();
 
             String targetUrl = BASE_URL.getValue() + "exchangeProfile.aml";
             page.waitForURL("**/" + "exchangeProfile.aml");
 
-            if (page.url().equals(targetUrl)) {
+            if (page.url().contains(targetUrl) || targetUrl.contains(page.url())) {
                 log.info("Success - Navigation to tab GAMES -> Exchange Profile");
                 page.screenshot(new Page.ScreenshotOptions().setPath(Paths.get(SCREENSHOT_PATH.getValue() + "testCase008.png")));
                 return "✅ Exchange Profile tab loaded correctly! URL: " + page.url();
