@@ -34,3 +34,6 @@ build/
 
 /screenshots
 /browser
+
+# Local secrets — never commit
+.env
