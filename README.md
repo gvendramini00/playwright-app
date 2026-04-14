@@ -28,27 +28,48 @@ cd playwright-app
 
 ### 2. Configure environment variables
 
-Copy the example file and fill in the values:
+Credentials are never stored in any committed file. You must provide them through your IDE run configuration.
+
+#### IntelliJ IDEA (recommended)
+
+1. Open **Run → Edit Configurations**
+2. Select your `MyPlayRightAppApplication` run configuration
+3. Click the **`...`** icon next to **Environment variables**
+4. Paste the following, replacing the values with your own:
+
+```
+SPRING_PROFILES_ACTIVE=dev;ALIRA_USERNAME=your_alira_user;ALIRA_PASSWORD=your_alira_password;CGM_DB_USERNAME=your_db_user;CGM_DB_PASSWORD=your_db_password;GPPT_DB_USERNAME=your_db_user;GPPT_DB_PASSWORD=your_db_password
+```
+
+5. Click **OK** — done. IntelliJ stores these per run config on your machine only, never in Git.
+
+> See `.env.example` for the full list of available variables and their descriptions.
+
+#### Terminal / shell
+
+If running from a terminal, export the variables before starting the app:
+
+```bash
+export SPRING_PROFILES_ACTIVE=dev
+export ALIRA_USERNAME=your_alira_user
+export ALIRA_PASSWORD=your_alira_password
+export CGM_DB_USERNAME=your_db_user
+export CGM_DB_PASSWORD=your_db_password
+export GPPT_DB_USERNAME=your_db_user
+export GPPT_DB_PASSWORD=your_db_password
+
+./mvnw spring-boot:run
+```
+
+Or copy `.env.example` to `.env`, fill in the values, and source it:
 
 ```bash
 cp .env.example .env
+# edit .env with your credentials
+source .env && ./mvnw spring-boot:run
 ```
 
-Edit `.env` with the real credentials:
-
-```dotenv
-ALIRA_USERNAME=your_alira_user
-ALIRA_PASSWORD=your_alira_password
-
-CGM_DB_USERNAME=your_cgm_db_user
-CGM_DB_PASSWORD=your_cgm_db_password
-
-GPPT_DB_USERNAME=your_gppt_db_user
-GPPT_DB_PASSWORD=your_gppt_db_password
-```
-
-> **.env is git-ignored and must never be committed.**  
-> See `.env.example` for all available variables and their defaults.
+> **.env is git-ignored and must never be committed.**
 
 ### 3. Build the project
 
