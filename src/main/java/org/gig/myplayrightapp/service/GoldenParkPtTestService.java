@@ -9,6 +9,7 @@ import org.gig.myplayrightapp.dto.InsertPlayerDTO;
 import org.gig.myplayrightapp.dto.InsertPlayerGpPtDTO;
 import org.gig.myplayrightapp.enums.Brand;
 import org.gig.myplayrightapp.util.RegistrationDataUtils;
+import org.gig.myplayrightapp.util.ScreenshotUtil;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
@@ -18,12 +19,16 @@ import java.util.Locale;
 import java.util.Optional;
 import java.util.regex.Pattern;
 
+import static org.gig.myplayrightapp.enums.AliraVariables.SCREENSHOT_CGM_PATH;
+import static org.gig.myplayrightapp.enums.AliraVariables.SCREENSHOT_GP_PATH;
+
 @Slf4j
 @Service
 @RequiredArgsConstructor
 public class GoldenParkPtTestService {
 
     private final PlayerService playerService;
+    private final ScreenshotUtil screenshotUtil;
 
     @Value("${playwright.headless:true}")
     private boolean headless;
@@ -36,7 +41,6 @@ public class GoldenParkPtTestService {
         InsertPlayerGpPtDTO dto = RegistrationDataUtils.generateUniquePortugalInsertPlayerDTO(playerService);
 
         try (Playwright pw = Playwright.create()) {
-            Files.createDirectories(Paths.get(SHOTS_DIR));
 
             Browser browser = pw.chromium().launch(new BrowserType.LaunchOptions().setHeadless(headless));
             BrowserContext ctx = browser.newContext();
@@ -94,8 +98,9 @@ public class GoldenParkPtTestService {
                     .click(new Locator.ClickOptions().setTimeout(10000));
             page.waitForTimeout(2500);
 
-            String shot = SHOTS_DIR + "/gp_register_" + System.currentTimeMillis() + ".png";
+            String shot = SCREENSHOT_GP_PATH + "register_" + System.currentTimeMillis() + ".png";
             page.screenshot(new Page.ScreenshotOptions().setPath(Paths.get(shot)));
+            screenshotUtil.takeScreenshot(page, SCREENSHOT_GP_PATH, "register_" + System.currentTimeMillis());
 
             var errors = page.locator(".error, .text-danger, .invalid-feedback, .form-errors, .ng-binding");
             boolean hasError = false;
@@ -132,8 +137,6 @@ public class GoldenParkPtTestService {
         var es = maybeExisting.get();
 
         try (Playwright pw = Playwright.create()) {
-            Files.createDirectories(Paths.get(SHOTS_DIR));
-
             Browser browser = pw.chromium().launch(new BrowserType.LaunchOptions().setHeadless(headless));
             BrowserContext ctx = browser.newContext();
             Page page = ctx.newPage();
@@ -162,8 +165,8 @@ public class GoldenParkPtTestService {
                 if (!alerts.nth(i).isVisible()) continue;
                 String txt = alerts.nth(i).innerText().toLowerCase(Locale.ROOT);
                 if (txt.contains("já está em uso") || txt.contains("ja está em uso") || txt.contains("ya está en uso")) {
-                    String shot = SHOTS_DIR + "/gp_duplicate_nif_" + System.currentTimeMillis() + ".png";
-                    page.screenshot(new Page.ScreenshotOptions().setPath(Paths.get(shot)));
+                    String shot = SCREENSHOT_GP_PATH + "duplicate_nif_" + System.currentTimeMillis() + ".png";
+                    screenshotUtil.takeScreenshot(page, SCREENSHOT_GP_PATH, "duplicate_nif_" + System.currentTimeMillis());
                     log.info("✅ Duplicate NIF detected for user '{}' (NIF attempted: {}). Screenshot: {}",
                             es.alias(), es.nationalId(), shot);
                     browser.close();

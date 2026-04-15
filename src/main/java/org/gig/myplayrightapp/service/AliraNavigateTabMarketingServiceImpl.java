@@ -7,11 +7,10 @@ import com.microsoft.playwright.options.WaitForSelectorState;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.gig.myplayrightapp.util.AliraLoginUtil;
+import org.gig.myplayrightapp.util.ScreenshotUtil;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
-import java.nio.file.Files;
-import java.nio.file.Paths;
 import java.time.LocalDate;
 import java.time.format.TextStyle;
 import java.util.Locale;
@@ -24,6 +23,7 @@ import static org.gig.myplayrightapp.enums.AliraVariables.*;
 public class AliraNavigateTabMarketingServiceImpl implements AliraNavigateTabMarketingService {
 
     private final AliraLoginUtil aliraLoginUtil;
+    private final ScreenshotUtil screenshotUtil;
 
     @Value("${playwright.headless:true}")
     private boolean headless;
@@ -32,7 +32,6 @@ public class AliraNavigateTabMarketingServiceImpl implements AliraNavigateTabMar
     public String testCase012NavigateDashboardTest() {
         try (Playwright playwright = Playwright.create();
              Browser browser = playwright.chromium().launch(new BrowserType.LaunchOptions().setHeadless(headless))) {
-            Files.createDirectories(Paths.get(SCREENSHOT_PATH.getValue()));
             BrowserContext context = browser.newContext();
             Page page = context.newPage();
 
@@ -44,9 +43,7 @@ public class AliraNavigateTabMarketingServiceImpl implements AliraNavigateTabMar
             Locator rows = page.locator("table tbody tr");
             int rowCount = rows.count();
 
-            page.screenshot(new Page.ScreenshotOptions()
-                    .setPath(Paths.get(SCREENSHOT_PATH.getValue() + "testCase012.png"))
-                    .setFullPage(true));
+            screenshotUtil.takeScreenshot(page, SCREENSHOT_ALIRA_PATH, "testCase012");
 
             if (rowCount > 0) {
                 log.info(LOG_TABLE_SUCCESS.getValue(), rowCount);
@@ -66,7 +63,6 @@ public class AliraNavigateTabMarketingServiceImpl implements AliraNavigateTabMar
     public String testCase013NavigateMarketingBonusDepositPromotionsTest() {
         try (Playwright playwright = Playwright.create();
              Browser browser = playwright.chromium().launch(new BrowserType.LaunchOptions().setHeadless(headless))) {
-            Files.createDirectories(Paths.get(SCREENSHOT_PATH.getValue()));
             BrowserContext context = browser.newContext();
             Page page = context.newPage();
 
@@ -80,9 +76,7 @@ public class AliraNavigateTabMarketingServiceImpl implements AliraNavigateTabMar
             Locator rows = page.locator("table tbody tr");
             int rowCount = (int) rows.count();
 
-            page.screenshot(new Page.ScreenshotOptions()
-                    .setPath(Paths.get(SCREENSHOT_PATH.getValue() + "testCase013.png"))
-                    .setFullPage(true));
+            screenshotUtil.takeScreenshot(page, SCREENSHOT_ALIRA_PATH, "testCase013");
 
             if (rowCount > 0) {
                 log.info(LOG_TABLE_SUCCESS.getValue(), rowCount);
@@ -102,7 +96,6 @@ public class AliraNavigateTabMarketingServiceImpl implements AliraNavigateTabMar
     public String testCase014NavigateMarketingBonusDepositPromotionsNewModalTest() {
         try (Playwright playwright = Playwright.create();
              Browser browser = playwright.chromium().launch(new BrowserType.LaunchOptions().setHeadless(headless))) {
-            Files.createDirectories(Paths.get(SCREENSHOT_PATH.getValue()));
             BrowserContext context = browser.newContext();
             Page page = context.newPage();
 
@@ -120,9 +113,7 @@ public class AliraNavigateTabMarketingServiceImpl implements AliraNavigateTabMar
 
             boolean modalVisible = modalTitle.isVisible();
 
-            page.screenshot(new Page.ScreenshotOptions()
-                    .setPath(Paths.get(SCREENSHOT_PATH.getValue() + "testCase014.png"))
-                    .setFullPage(true));
+            screenshotUtil.takeScreenshot(page, SCREENSHOT_ALIRA_PATH, "testCase014_" + System.currentTimeMillis());
 
             if (modalVisible) {
                 log.info("New Deposit Promotion modal is visible");
@@ -144,7 +135,6 @@ public class AliraNavigateTabMarketingServiceImpl implements AliraNavigateTabMar
 
         try (Playwright playwright = Playwright.create();
              Browser browser = playwright.chromium().launch(new BrowserType.LaunchOptions().setHeadless(headless))) {
-            Files.createDirectories(Paths.get(SCREENSHOT_PATH.getValue()));
             BrowserContext context = browser.newContext();
             Page page = context.newPage();
 
@@ -177,7 +167,6 @@ public class AliraNavigateTabMarketingServiceImpl implements AliraNavigateTabMar
             // Fill amount and rollover
             page.locator("#dprAmount").click();
             page.locator("#dprAmount").fill("1");
-            page.locator("#dprMinRollover").click();
             page.locator("#dprMinRollover").click();
             page.locator("#dprMinRollover").fill("1");
             page.locator("#dprRolloverAmount").click();
@@ -242,10 +231,8 @@ public class AliraNavigateTabMarketingServiceImpl implements AliraNavigateTabMar
                 }
             }
 
-            String screenshotPath = SCREENSHOT_PATH.getValue() + "testCase015_" + System.currentTimeMillis() + ".png";
-            page.screenshot(new Page.ScreenshotOptions()
-                    .setPath(Paths.get(screenshotPath))
-                    .setFullPage(true));
+            String screenshotPath = SCREENSHOT_ALIRA_PATH.getValue() + "testCase015_" + System.currentTimeMillis() + ".png";
+            screenshotUtil.takeScreenshot(page, SCREENSHOT_ALIRA_PATH, "testCase015_" + System.currentTimeMillis());
 
             if (hasError) {
                 log.warn("❌ Deposit promotion '{}' save returned errors. Screenshot: {}", promotionName, screenshotPath);
@@ -265,7 +252,6 @@ public class AliraNavigateTabMarketingServiceImpl implements AliraNavigateTabMar
     public String testCase016EditDepositPromotionTest() {
         try (Playwright playwright = Playwright.create();
              Browser browser = playwright.chromium().launch(new BrowserType.LaunchOptions().setHeadless(headless))) {
-            Files.createDirectories(Paths.get(SCREENSHOT_PATH.getValue()));
             BrowserContext context = browser.newContext();
             Page page = context.newPage();
 
@@ -314,10 +300,8 @@ public class AliraNavigateTabMarketingServiceImpl implements AliraNavigateTabMar
             Locator updatedCell = page.getByRole(AriaRole.GRIDCELL, new Page.GetByRoleOptions().setName(updatedName));
             boolean nameVisible = updatedCell.count() > 0 && updatedCell.first().isVisible();
 
-            String screenshotPath = SCREENSHOT_PATH.getValue() + "testCase016_" + System.currentTimeMillis() + ".png";
-            page.screenshot(new Page.ScreenshotOptions()
-                    .setPath(Paths.get(screenshotPath))
-                    .setFullPage(true));
+            String screenshotPath = SCREENSHOT_ALIRA_PATH.getValue() + "testCase016_" + System.currentTimeMillis() + ".png";
+            screenshotUtil.takeScreenshot(page, SCREENSHOT_ALIRA_PATH, "testCase016_" + System.currentTimeMillis());
 
             if (nameVisible) {
                 log.info("✅ Deposit promotion renamed '{}' → '{}'. Screenshot: {}", originalName, updatedName, screenshotPath);
@@ -337,7 +321,6 @@ public class AliraNavigateTabMarketingServiceImpl implements AliraNavigateTabMar
     public String testCase017DeleteDepositPromotionTest() {
         try (Playwright playwright = Playwright.create();
              Browser browser = playwright.chromium().launch(new BrowserType.LaunchOptions().setHeadless(headless))) {
-            Files.createDirectories(Paths.get(SCREENSHOT_PATH.getValue()));
             BrowserContext context = browser.newContext();
             Page page = context.newPage();
 
@@ -379,10 +362,8 @@ public class AliraNavigateTabMarketingServiceImpl implements AliraNavigateTabMar
                 }
             }
 
-            String screenshotPath = SCREENSHOT_PATH.getValue() + "testCase017_" + System.currentTimeMillis() + ".png";
-            page.screenshot(new Page.ScreenshotOptions()
-                    .setPath(Paths.get(screenshotPath))
-                    .setFullPage(true));
+            String screenshotPath = SCREENSHOT_ALIRA_PATH.getValue() + "testCase017_" + System.currentTimeMillis() + ".png";
+            screenshotUtil.takeScreenshot(page, SCREENSHOT_ALIRA_PATH, "testCase017_" + System.currentTimeMillis());
 
             if (!stillExists) {
                 log.info("✅ Deposit promotion ID '{}' deleted successfully. Screenshot: {}", deletedId, screenshotPath);

@@ -8,6 +8,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.gig.myplayrightapp.dto.InsertPlayerDTO;
 import org.gig.myplayrightapp.util.RegistrationDataUtils;
+import org.gig.myplayrightapp.util.ScreenshotUtil;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
@@ -17,12 +18,15 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
+import static org.gig.myplayrightapp.enums.AliraVariables.SCREENSHOT_CGM_PATH;
+
 @Slf4j
 @Service
 @RequiredArgsConstructor
 public class CasinoGranMadridTestService {
 
     private final PlayerService playerService;
+    private final ScreenshotUtil screenshotUtil;
 
     @Value("${playwright.headless:true}")
     private boolean headless;
@@ -34,7 +38,7 @@ public class CasinoGranMadridTestService {
             Page page = browser.newPage();
             page.navigate("https://casinogranmadridonline.pre.tecnalis.com/");
             String title = page.title();
-            page.screenshot(new Page.ScreenshotOptions().setPath(Paths.get("screenshots/testCase001.png")));
+            screenshotUtil.takeScreenshot(page, SCREENSHOT_CGM_PATH, "testCase001_" + System.currentTimeMillis());
             browser.close();
             return "✅ Site loaded. Title: " + title;
         } catch (Exception e) {
@@ -46,7 +50,6 @@ public class CasinoGranMadridTestService {
         log.info("✅ TestCase002 executed: Open Register modal and validate registration heading");
 
         try (Playwright playwright = Playwright.create()) {
-            Files.createDirectories(Paths.get("screenshots"));
 
             Browser browser = playwright.chromium().launch(new BrowserType.LaunchOptions().setHeadless(headless));
             BrowserContext context = browser.newContext(new Browser.NewContextOptions()
@@ -57,9 +60,7 @@ public class CasinoGranMadridTestService {
             Page page = context.newPage();
 
             page.offConsoleMessage(consoleMessage -> log.error(consoleMessage.toString()));
-
             page.navigate("https://casinogranmadridonline.pre.tecnalis.com/");
-
             page.getByText("REGÍSTRATE").click();
 
             Locator heading = page.getByRole(AriaRole.HEADING, new Page.GetByRoleOptions().setName("Regístrate ahora."));
@@ -67,7 +68,7 @@ public class CasinoGranMadridTestService {
 
             page.waitForTimeout(1000);
 
-            page.screenshot(new Page.ScreenshotOptions().setPath(Paths.get("screenshots/testCase002.png")));
+            screenshotUtil.takeScreenshot(page, SCREENSHOT_CGM_PATH, "testCase002_" + System.currentTimeMillis());
 
             boolean headingVisible = heading.isVisible();
 
@@ -88,8 +89,6 @@ public class CasinoGranMadridTestService {
         log.info("✅ TestCase003 executed: Fast Register via Veridas — stop at camera activation");
 
         try (Playwright playwright = Playwright.create()) {
-            Files.createDirectories(Paths.get("screenshots"));
-
             Browser browser = playwright.chromium().launch(new BrowserType.LaunchOptions()
                     .setHeadless(headless)
                     .setArgs(Arrays.asList(
@@ -129,7 +128,7 @@ public class CasinoGranMadridTestService {
             log.info("✅ Camera and document capture prompt visible");
 
             page.waitForTimeout(1500);
-            page.screenshot(new Page.ScreenshotOptions().setPath(Paths.get("screenshots/testCase003.png")));
+            screenshotUtil.takeScreenshot(page, SCREENSHOT_CGM_PATH, "testCase003_" + System.currentTimeMillis());
 
             browser.close();
             return "✅ Veridas Fast Register opened and camera capture screen visible.";
@@ -148,8 +147,6 @@ public class CasinoGranMadridTestService {
         log.info("✅ Unique player to be inserted: {}", dto.email());
 
         try (Playwright playwright = Playwright.create()) {
-            Files.createDirectories(Paths.get("screenshots"));
-
             Browser browser = playwright.chromium().launch(new BrowserType.LaunchOptions().setHeadless(headless));
             BrowserContext context = browser.newContext();
             Page page = context.newPage();
@@ -202,21 +199,19 @@ public class CasinoGranMadridTestService {
                 for (int i = 0; i < errorLocator.count(); i++) {
                     if (errorLocator.nth(i).isVisible()) {
                         String errorText = errorLocator.nth(i).innerText();
-                        String failPath = "screenshots/testCase004_failed_" + System.currentTimeMillis() + ".png";
-                        page.screenshot(new Page.ScreenshotOptions().setPath(Paths.get(failPath)));
+                        screenshotUtil.takeScreenshot(page, SCREENSHOT_CGM_PATH, "testCase004_failed_" + System.currentTimeMillis());
                         throw new RuntimeException("❌ Registration failed: " + errorText);
                     }
                 }
             }
 
             if (page.url().equals(beforeSubmitUrl)) {
-                String failPath = "screenshots/testCase004_failed_no_redirect_" + System.currentTimeMillis() + ".png";
-                page.screenshot(new Page.ScreenshotOptions().setPath(Paths.get(failPath)));
+                screenshotUtil.takeScreenshot(page, SCREENSHOT_CGM_PATH, "testCase004_failed_no_redirect_" + System.currentTimeMillis());
                 throw new RuntimeException("❌ Registration failed: Page did not proceed after submitting.");
             }
 
             String screenshotPath = "screenshots/testCase004_" + System.currentTimeMillis() + ".png";
-            page.screenshot(new Page.ScreenshotOptions().setPath(Paths.get(screenshotPath)));
+            screenshotUtil.takeScreenshot(page, SCREENSHOT_CGM_PATH, "testCase004_" + System.currentTimeMillis());
 
             browser.close();
             RegistrationDataUtils.logGeneratedUser(dto.email(), dto.nationalId(), dto.alias(), screenshotPath);
@@ -233,8 +228,6 @@ public class CasinoGranMadridTestService {
         log.info("✅ TestCase005 executed: Registration with missing name");
 
         try (Playwright playwright = Playwright.create()) {
-            Files.createDirectories(Paths.get("screenshots"));
-
             Browser browser = playwright.chromium().launch(new BrowserType.LaunchOptions().setHeadless(headless));
             BrowserContext context = browser.newContext();
             Page page = context.newPage();
@@ -251,7 +244,8 @@ public class CasinoGranMadridTestService {
 
             String afterClickURL = page.url();
 
-            page.screenshot(new Page.ScreenshotOptions().setPath(Paths.get("screenshots/testCase005.png")));
+            screenshotUtil.takeScreenshot(page, SCREENSHOT_CGM_PATH, "testCase005_" + System.currentTimeMillis());
+
 
             if (currentURL.equals(afterClickURL)) {
                 log.info("✅ Page did not advance. Validation likely triggered.");
@@ -278,8 +272,6 @@ public class CasinoGranMadridTestService {
         InsertPlayerDTO dto = maybeExistingPlayer.get();
 
         try (Playwright playwright = Playwright.create()) {
-            Files.createDirectories(Paths.get("screenshots"));
-
             Browser browser = playwright.chromium().launch(new BrowserType.LaunchOptions().setHeadless(headless));
             BrowserContext context = browser.newContext();
             Page page = context.newPage();
@@ -309,7 +301,8 @@ public class CasinoGranMadridTestService {
                     String text = duplicateModal.nth(i).innerText().trim();
                     if (text.contains("DNI/NIE ya está en uso")) {
                         String screenshotPath = "screenshots/testCase006_duplicate_dni_" + System.currentTimeMillis() + ".png";
-                        page.screenshot(new Page.ScreenshotOptions().setPath(Paths.get(screenshotPath)));
+                        screenshotUtil.takeScreenshot(page, SCREENSHOT_CGM_PATH, "testCase006_duplicate_dni_" + System.currentTimeMillis());
+
                         log.info("✅ Duplicate DNI/NIE detected for user '{}' (DNI: {}). Screenshot saved: {}", dto.alias(), dto.nationalId(), screenshotPath);
                         browser.close();
                         return "✅ TestCase006 passed: Duplicate warning shown.";
@@ -318,7 +311,7 @@ public class CasinoGranMadridTestService {
             }
 
             String failPath = "screenshots/testCase006_no_modal_" + System.currentTimeMillis() + ".png";
-            page.screenshot(new Page.ScreenshotOptions().setPath(Paths.get(failPath)));
+            screenshotUtil.takeScreenshot(page, SCREENSHOT_CGM_PATH, "testCase006_no_modal_" + System.currentTimeMillis());
             log.warn("❌ Expected modal did not appear. Screenshot: {}", failPath);
 
             browser.close();

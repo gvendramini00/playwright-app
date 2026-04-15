@@ -6,11 +6,9 @@ import com.microsoft.playwright.options.LoadState;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.gig.myplayrightapp.util.AliraLoginUtil;
+import org.gig.myplayrightapp.util.ScreenshotUtil;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
-
-import java.nio.file.Files;
-import java.nio.file.Paths;
 
 import static org.gig.myplayrightapp.enums.AliraVariables.*;
 
@@ -20,6 +18,7 @@ import static org.gig.myplayrightapp.enums.AliraVariables.*;
 public class AliraNavigateTabWebsiteServiceImpl implements AliraNavigateTabWebsiteService {
 
     private final AliraLoginUtil aliraLoginUtil;
+    private final ScreenshotUtil screenshotUtil;
 
     @Value("${playwright.headless:true}")
     private boolean headless;
@@ -28,7 +27,6 @@ public class AliraNavigateTabWebsiteServiceImpl implements AliraNavigateTabWebsi
     public String testCase009NavigateTabWebsiteCMSTest() {
         try (Playwright playwright = Playwright.create();
              Browser browser = playwright.chromium().launch(new BrowserType.LaunchOptions().setHeadless(headless))) {
-            Files.createDirectories(Paths.get(SCREENSHOT_PATH.getValue()));
             BrowserContext context = browser.newContext();
             Page page = context.newPage();
 
@@ -43,7 +41,7 @@ public class AliraNavigateTabWebsiteServiceImpl implements AliraNavigateTabWebsi
 
             if (page.url().contains(targetUrl) || targetUrl.contains(page.url())) {
                 log.info("Success - Navigation to tab WEBSITE -> CMS");
-                page.screenshot(new Page.ScreenshotOptions().setPath(Paths.get(SCREENSHOT_PATH.getValue() + "testCase009.png")));
+                screenshotUtil.takeScreenshot(page, SCREENSHOT_ALIRA_PATH,"testCase009_" + System.currentTimeMillis());
                 return "✅ CMS tab loaded correctly! URL: " + page.url();
             } else {
                 return ERR_NAV_FAILED.getValue() + targetUrl + ERR_NAV_BUT_GOT.getValue() + page.url();
@@ -59,7 +57,6 @@ public class AliraNavigateTabWebsiteServiceImpl implements AliraNavigateTabWebsi
     public String testCase010NavigateTabWebsiteConfigurationCMSAccessTest() {
         try (Playwright playwright = Playwright.create();
              Browser browser = playwright.chromium().launch(new BrowserType.LaunchOptions().setHeadless(headless))) {
-            Files.createDirectories(Paths.get(SCREENSHOT_PATH.getValue()));
             BrowserContext context = browser.newContext();
             Page page = context.newPage();
 
@@ -75,7 +72,7 @@ public class AliraNavigateTabWebsiteServiceImpl implements AliraNavigateTabWebsi
 
             if (page.url().contains(targetUrl) || targetUrl.contains(page.url())) {
                 log.info("Success - Navigation to tab WEBSITE -> Configuration -> CMS Access");
-                page.screenshot(new Page.ScreenshotOptions().setPath(Paths.get(SCREENSHOT_PATH.getValue() + "testCase010.png")));
+                screenshotUtil.takeScreenshot(page, SCREENSHOT_ALIRA_PATH,"testCase010_" + System.currentTimeMillis());
                 return "✅ CMS Access tab loaded correctly! URL: " + page.url();
             } else {
                 return ERR_NAV_FAILED.getValue() + targetUrl + ERR_NAV_BUT_GOT.getValue() + page.url();
@@ -91,7 +88,6 @@ public class AliraNavigateTabWebsiteServiceImpl implements AliraNavigateTabWebsi
     public String testCase011NavigateTabWebsiteConfigurationConstantsTest() {
         try (Playwright playwright = Playwright.create();
              Browser browser = playwright.chromium().launch(new BrowserType.LaunchOptions().setHeadless(headless))) {
-            Files.createDirectories(Paths.get(SCREENSHOT_PATH.getValue()));
             BrowserContext context = browser.newContext();
             Page page = context.newPage();
 
@@ -107,7 +103,7 @@ public class AliraNavigateTabWebsiteServiceImpl implements AliraNavigateTabWebsi
 
             if (page.url().contains(targetUrl) || targetUrl.contains(page.url())) {
                 log.info("Success - Navigation to tab WEBSITE -> Configuration -> Constants");
-                page.screenshot(new Page.ScreenshotOptions().setPath(Paths.get(SCREENSHOT_PATH.getValue() + "testCase011.png")));
+                screenshotUtil.takeScreenshot(page, SCREENSHOT_ALIRA_PATH,"testCase011_" + System.currentTimeMillis());
                 return "✅ Constants tab loaded correctly! URL: " + page.url();
             } else {
                 return ERR_NAV_FAILED.getValue() + targetUrl + ERR_NAV_BUT_GOT.getValue() + page.url();

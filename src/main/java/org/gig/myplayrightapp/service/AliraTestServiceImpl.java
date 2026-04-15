@@ -7,11 +7,9 @@ import com.microsoft.playwright.options.WaitForSelectorState;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.gig.myplayrightapp.util.AliraLoginUtil;
+import org.gig.myplayrightapp.util.ScreenshotUtil;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
-
-import java.nio.file.Files;
-import java.nio.file.Paths;
 
 import static org.gig.myplayrightapp.enums.AliraVariables.*;
 
@@ -21,6 +19,7 @@ import static org.gig.myplayrightapp.enums.AliraVariables.*;
 public class AliraTestServiceImpl implements AliraTestService {
 
     private final AliraLoginUtil aliraLoginUtil;
+    private final ScreenshotUtil screenshotUtil;
 
     @Value("${alira.username}")
     private String aliraUsername;
@@ -39,7 +38,6 @@ public class AliraTestServiceImpl implements AliraTestService {
         try (Playwright playwright = Playwright.create();
              Browser browser = playwright.chromium().launch(new BrowserType.LaunchOptions().setHeadless(headless))) {
 
-            Files.createDirectories(Paths.get(SCREENSHOT_PATH.getValue()));
             BrowserContext context = browser.newContext();
             Page page = context.newPage();
 
@@ -50,7 +48,7 @@ public class AliraTestServiceImpl implements AliraTestService {
             page.getByRole(AriaRole.LINK, new Page.GetByRoleOptions().setName("Sign in")).click();
             page.waitForSelector("text=Alira Dashboard", new Page.WaitForSelectorOptions().setState(WaitForSelectorState.ATTACHED).setTimeout(5000));
             page.waitForLoadState(LoadState.NETWORKIDLE);
-            page.screenshot(new Page.ScreenshotOptions().setPath(Paths.get(SCREENSHOT_PATH.getValue() + "testCase001.png")).setFullPage(true));
+            screenshotUtil.takeScreenshot(page, SCREENSHOT_ALIRA_PATH, "testCase001_" + System.currentTimeMillis());
 
             log.info("Login successful for user: {}", aliraUsername);
             return String.format("✅ User %s logged in successfully.", aliraUsername);
@@ -65,7 +63,6 @@ public class AliraTestServiceImpl implements AliraTestService {
     public String testCase002NavigatePlayerProfile() {
         try (Playwright playwright = Playwright.create();
              Browser browser = playwright.chromium().launch(new BrowserType.LaunchOptions().setHeadless(headless))) {
-            Files.createDirectories(Paths.get(SCREENSHOT_PATH.getValue()));
             BrowserContext context = browser.newContext();
             Page page = context.newPage();
 
@@ -76,7 +73,7 @@ public class AliraTestServiceImpl implements AliraTestService {
             page.locator("#playerSearcherBtn").click();
             page.waitForSelector("text=Player Profile", new Page.WaitForSelectorOptions().setState(WaitForSelectorState.ATTACHED).setTimeout(5000));
             page.waitForLoadState(LoadState.NETWORKIDLE);
-            page.screenshot(new Page.ScreenshotOptions().setPath(Paths.get(SCREENSHOT_PATH.getValue() + "testCase002.png")).setFullPage(true));
+            screenshotUtil.takeScreenshot(page, SCREENSHOT_ALIRA_PATH,"testCase002_" + System.currentTimeMillis());
 
             log.info("Player profile successful for player: {}", ALIRA_PLAYER.getValue());
             return "✅ Player Profile loaded correctly!";

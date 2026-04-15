@@ -6,7 +6,9 @@ import lombok.RequiredArgsConstructor;
 @Getter
 @RequiredArgsConstructor
 public enum AliraVariables {
-    SCREENSHOT_PATH("screenshots/alira/"),
+    SCREENSHOT_ALIRA_PATH("screenshots/alira/"),
+    SCREENSHOT_CGM_PATH("screenshots/cgm/"),
+    SCREENSHOT_GP_PATH("screenshots/gp/"),
     ALIRA_DASHBOARD("Alira Dashboard"),
     ALIRA_PLAYER("test"),
     LOGIN_URL("https://gms.pre.tecnalis.com/alira-server/login.jsp"),

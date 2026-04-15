@@ -5,7 +5,9 @@ import com.microsoft.playwright.options.AriaRole;
 import com.microsoft.playwright.options.LoadState;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.gig.myplayrightapp.enums.AliraVariables;
 import org.gig.myplayrightapp.util.AliraLoginUtil;
+import org.gig.myplayrightapp.util.ScreenshotUtil;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
@@ -20,6 +22,7 @@ import static org.gig.myplayrightapp.enums.AliraVariables.*;
 public class AliraNavigateTabGamesServiceImpl implements AliraNavigateTabGamesService {
 
     private final AliraLoginUtil aliraLoginUtil;
+    private final ScreenshotUtil screenshotUtil;
 
     @Value("${playwright.headless:true}")
     private boolean headless;
@@ -28,7 +31,6 @@ public class AliraNavigateTabGamesServiceImpl implements AliraNavigateTabGamesSe
     public String testCase003NavigateTabGamesRoomsTest() {
         try (Playwright playwright = Playwright.create();
              Browser browser = playwright.chromium().launch(new BrowserType.LaunchOptions().setHeadless(headless))) {
-            Files.createDirectories(Paths.get(SCREENSHOT_PATH.getValue()));
             BrowserContext context = browser.newContext();
             Page page = context.newPage();
 
@@ -43,7 +45,7 @@ public class AliraNavigateTabGamesServiceImpl implements AliraNavigateTabGamesSe
 
             if (page.url().contains(targetUrl) || targetUrl.contains(page.url())) {
                 log.info("Success - Navigation to tab GAMES -> ROOMS");
-                page.screenshot(new Page.ScreenshotOptions().setPath(Paths.get(SCREENSHOT_PATH.getValue() + "testCase003.png")));
+                screenshotUtil.takeScreenshot(page, SCREENSHOT_ALIRA_PATH, "testCase003");
                 return "✅ Rooms tab loaded correctly! URL: " + page.url();
             } else {
                 return ERR_NAV_FAILED.getValue() + targetUrl + ERR_NAV_BUT_GOT.getValue() + page.url();
@@ -59,7 +61,6 @@ public class AliraNavigateTabGamesServiceImpl implements AliraNavigateTabGamesSe
     public String testCase004NavigateTabGamesProcessRoomsTest() {
         try (Playwright playwright = Playwright.create();
              Browser browser = playwright.chromium().launch(new BrowserType.LaunchOptions().setHeadless(headless))) {
-            Files.createDirectories(Paths.get(SCREENSHOT_PATH.getValue()));
             BrowserContext context = browser.newContext();
             Page page = context.newPage();
 
@@ -74,7 +75,7 @@ public class AliraNavigateTabGamesServiceImpl implements AliraNavigateTabGamesSe
 
             if (page.url().contains(targetUrl) || targetUrl.contains(page.url())) {
                 log.info("Success - Navigation to tab GAMES -> PROCESS ROOMS");
-                page.screenshot(new Page.ScreenshotOptions().setPath(Paths.get(SCREENSHOT_PATH.getValue() + "testCase004.png")));
+                screenshotUtil.takeScreenshot(page, SCREENSHOT_ALIRA_PATH, "testCase004");
                 return "✅ Rooms tab loaded correctly! URL: " + page.url();
             } else {
                 return ERR_NAV_FAILED.getValue() + targetUrl + ERR_NAV_BUT_GOT.getValue() + page.url();
@@ -90,7 +91,6 @@ public class AliraNavigateTabGamesServiceImpl implements AliraNavigateTabGamesSe
     public String testCase005NavigateTabGamesLobbyRoomsTest() {
         try (Playwright playwright = Playwright.create();
              Browser browser = playwright.chromium().launch(new BrowserType.LaunchOptions().setHeadless(headless))) {
-            Files.createDirectories(Paths.get(SCREENSHOT_PATH.getValue()));
             BrowserContext context = browser.newContext();
             Page page = context.newPage();
 
@@ -105,7 +105,7 @@ public class AliraNavigateTabGamesServiceImpl implements AliraNavigateTabGamesSe
 
             if (page.url().contains(targetUrl) || targetUrl.contains(page.url())) {
                 log.info("Success - Navigation to tab GAMES -> LOBBY ROOMS");
-                page.screenshot(new Page.ScreenshotOptions().setPath(Paths.get(SCREENSHOT_PATH.getValue() + "testCase005.png")));
+                screenshotUtil.takeScreenshot(page, SCREENSHOT_ALIRA_PATH, "testCase005");
                 return "✅ Lobby tab loaded correctly! URL: " + page.url();
             } else {
                 return ERR_NAV_FAILED.getValue() + targetUrl + ERR_NAV_BUT_GOT.getValue() + page.url();
@@ -121,7 +121,6 @@ public class AliraNavigateTabGamesServiceImpl implements AliraNavigateTabGamesSe
     public String testCase006NavigateTabGamesProvidersTest() {
         try (Playwright playwright = Playwright.create();
              Browser browser = playwright.chromium().launch(new BrowserType.LaunchOptions().setHeadless(headless))) {
-            Files.createDirectories(Paths.get(SCREENSHOT_PATH.getValue()));
             BrowserContext context = browser.newContext();
             Page page = context.newPage();
 
@@ -136,7 +135,7 @@ public class AliraNavigateTabGamesServiceImpl implements AliraNavigateTabGamesSe
 
             if (page.url().contains(targetUrl) || targetUrl.contains(page.url())) {
                 log.info("Success - Navigation to tab GAMES -> PROVIDERS");
-                page.screenshot(new Page.ScreenshotOptions().setPath(Paths.get(SCREENSHOT_PATH.getValue() + "testCase006.png")));
+                screenshotUtil.takeScreenshot(page, SCREENSHOT_ALIRA_PATH, "testCase006");
                 return "✅ Providers tab loaded correctly! URL: " + page.url();
             } else {
                 return ERR_NAV_FAILED.getValue() + targetUrl + ERR_NAV_BUT_GOT.getValue() + page.url();
@@ -152,7 +151,6 @@ public class AliraNavigateTabGamesServiceImpl implements AliraNavigateTabGamesSe
     public String testCase007NavigateTabGamesThemesTagsTest() {
         try (Playwright playwright = Playwright.create();
              Browser browser = playwright.chromium().launch(new BrowserType.LaunchOptions().setHeadless(headless))) {
-            Files.createDirectories(Paths.get(SCREENSHOT_PATH.getValue()));
             BrowserContext context = browser.newContext();
             Page page = context.newPage();
 
@@ -167,7 +165,7 @@ public class AliraNavigateTabGamesServiceImpl implements AliraNavigateTabGamesSe
 
             if (page.url().contains(targetUrl) || targetUrl.contains(page.url())) {
                 log.info("Success - Navigation to tab GAMES -> Themes & Tags");
-                page.screenshot(new Page.ScreenshotOptions().setPath(Paths.get(SCREENSHOT_PATH.getValue() + "testCase007.png")));
+                screenshotUtil.takeScreenshot(page, SCREENSHOT_ALIRA_PATH, "testCase007");
                 return "✅ Themes & Tags tab loaded correctly! URL: " + page.url();
             } else {
                 return ERR_NAV_FAILED.getValue() + targetUrl + ERR_NAV_BUT_GOT.getValue() + page.url();
@@ -183,7 +181,7 @@ public class AliraNavigateTabGamesServiceImpl implements AliraNavigateTabGamesSe
     public String testCase008NavigateTabGamesExchangeProfileTest() {
         try (Playwright playwright = Playwright.create();
              Browser browser = playwright.chromium().launch(new BrowserType.LaunchOptions().setHeadless(headless))) {
-            Files.createDirectories(Paths.get(SCREENSHOT_PATH.getValue()));
+            Files.createDirectories(Paths.get(SCREENSHOT_ALIRA_PATH.getValue()));
             BrowserContext context = browser.newContext();
             Page page = context.newPage();
 
@@ -198,7 +196,7 @@ public class AliraNavigateTabGamesServiceImpl implements AliraNavigateTabGamesSe
 
             if (page.url().contains(targetUrl) || targetUrl.contains(page.url())) {
                 log.info("Success - Navigation to tab GAMES -> Exchange Profile");
-                page.screenshot(new Page.ScreenshotOptions().setPath(Paths.get(SCREENSHOT_PATH.getValue() + "testCase008.png")));
+                screenshotUtil.takeScreenshot(page, SCREENSHOT_ALIRA_PATH, "testCase008");
                 return "✅ Exchange Profile tab loaded correctly! URL: " + page.url();
             } else {
                 return ERR_NAV_FAILED.getValue() + targetUrl + ERR_NAV_BUT_GOT.getValue() + page.url();
