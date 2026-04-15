@@ -11,9 +11,6 @@ import org.gig.myplayrightapp.util.ScreenshotUtil;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
-import java.nio.file.Files;
-import java.nio.file.Paths;
-
 import static org.gig.myplayrightapp.enums.AliraVariables.*;
 
 @Slf4j
@@ -181,7 +178,6 @@ public class AliraNavigateTabGamesServiceImpl implements AliraNavigateTabGamesSe
     public String testCase008NavigateTabGamesExchangeProfileTest() {
         try (Playwright playwright = Playwright.create();
              Browser browser = playwright.chromium().launch(new BrowserType.LaunchOptions().setHeadless(headless))) {
-            Files.createDirectories(Paths.get(SCREENSHOT_ALIRA_PATH.getValue()));
             BrowserContext context = browser.newContext();
             Page page = context.newPage();
 

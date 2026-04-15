@@ -13,13 +13,10 @@ import org.gig.myplayrightapp.util.ScreenshotUtil;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
-import java.nio.file.Files;
-import java.nio.file.Paths;
 import java.util.Locale;
 import java.util.Optional;
 import java.util.regex.Pattern;
 
-import static org.gig.myplayrightapp.enums.AliraVariables.SCREENSHOT_CGM_PATH;
 import static org.gig.myplayrightapp.enums.AliraVariables.SCREENSHOT_GP_PATH;
 
 @Slf4j
@@ -34,7 +31,6 @@ public class GoldenParkPtTestService {
     private boolean headless;
 
     private static final String BASE_URL = "https://goldenpark-pt.dev.tecnalis.com/";
-    private static final String SHOTS_DIR = "screenshots";
 
     @UseBrand(Brand.GP_PT)
     public String runManualRegistrationTest() {
@@ -98,9 +94,7 @@ public class GoldenParkPtTestService {
                     .click(new Locator.ClickOptions().setTimeout(10000));
             page.waitForTimeout(2500);
 
-            String shot = SCREENSHOT_GP_PATH + "register_" + System.currentTimeMillis() + ".png";
-            page.screenshot(new Page.ScreenshotOptions().setPath(Paths.get(shot)));
-            screenshotUtil.takeScreenshot(page, SCREENSHOT_GP_PATH, "register_" + System.currentTimeMillis());
+            String shot = screenshotUtil.takeScreenshot(page, SCREENSHOT_GP_PATH, "register");
 
             var errors = page.locator(".error, .text-danger, .invalid-feedback, .form-errors, .ng-binding");
             boolean hasError = false;
@@ -165,8 +159,7 @@ public class GoldenParkPtTestService {
                 if (!alerts.nth(i).isVisible()) continue;
                 String txt = alerts.nth(i).innerText().toLowerCase(Locale.ROOT);
                 if (txt.contains("já está em uso") || txt.contains("ja está em uso") || txt.contains("ya está en uso")) {
-                    String shot = SCREENSHOT_GP_PATH + "duplicate_nif_" + System.currentTimeMillis() + ".png";
-                    screenshotUtil.takeScreenshot(page, SCREENSHOT_GP_PATH, "duplicate_nif_" + System.currentTimeMillis());
+                    String shot = screenshotUtil.takeScreenshot(page, SCREENSHOT_GP_PATH, "duplicate_nif");
                     log.info("✅ Duplicate NIF detected for user '{}' (NIF attempted: {}). Screenshot: {}",
                             es.alias(), es.nationalId(), shot);
                     browser.close();
@@ -174,8 +167,7 @@ public class GoldenParkPtTestService {
                 }
             }
 
-            String fail = SHOTS_DIR + "/gp_duplicate_nif_no_modal_" + System.currentTimeMillis() + ".png";
-            page.screenshot(new Page.ScreenshotOptions().setPath(Paths.get(fail)));
+            String fail = screenshotUtil.takeScreenshot(page, SCREENSHOT_GP_PATH, "gp_duplicate_nif_no_modal");
             log.warn("❌ Expected duplicate NIF warning not found for '{}' (NIF attempted: {}). Screenshot: {}",
                     es.alias(), es.nationalId(), fail);
             browser.close();

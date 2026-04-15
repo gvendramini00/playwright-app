@@ -113,7 +113,7 @@ public class AliraNavigateTabMarketingServiceImpl implements AliraNavigateTabMar
 
             boolean modalVisible = modalTitle.isVisible();
 
-            screenshotUtil.takeScreenshot(page, SCREENSHOT_ALIRA_PATH, "testCase014_" + System.currentTimeMillis());
+            screenshotUtil.takeScreenshot(page, SCREENSHOT_ALIRA_PATH, "testCase014");
 
             if (modalVisible) {
                 log.info("New Deposit Promotion modal is visible");
@@ -231,8 +231,7 @@ public class AliraNavigateTabMarketingServiceImpl implements AliraNavigateTabMar
                 }
             }
 
-            String screenshotPath = SCREENSHOT_ALIRA_PATH.getValue() + "testCase015_" + System.currentTimeMillis() + ".png";
-            screenshotUtil.takeScreenshot(page, SCREENSHOT_ALIRA_PATH, "testCase015_" + System.currentTimeMillis());
+            String screenshotPath = screenshotUtil.takeScreenshot(page, SCREENSHOT_ALIRA_PATH, "testCase015");
 
             if (hasError) {
                 log.warn("❌ Deposit promotion '{}' save returned errors. Screenshot: {}", promotionName, screenshotPath);
@@ -300,8 +299,7 @@ public class AliraNavigateTabMarketingServiceImpl implements AliraNavigateTabMar
             Locator updatedCell = page.getByRole(AriaRole.GRIDCELL, new Page.GetByRoleOptions().setName(updatedName));
             boolean nameVisible = updatedCell.count() > 0 && updatedCell.first().isVisible();
 
-            String screenshotPath = SCREENSHOT_ALIRA_PATH.getValue() + "testCase016_" + System.currentTimeMillis() + ".png";
-            screenshotUtil.takeScreenshot(page, SCREENSHOT_ALIRA_PATH, "testCase016_" + System.currentTimeMillis());
+            String screenshotPath = screenshotUtil.takeScreenshot(page, SCREENSHOT_ALIRA_PATH, "testCase016");
 
             if (nameVisible) {
                 log.info("✅ Deposit promotion renamed '{}' → '{}'. Screenshot: {}", originalName, updatedName, screenshotPath);
@@ -362,8 +360,7 @@ public class AliraNavigateTabMarketingServiceImpl implements AliraNavigateTabMar
                 }
             }
 
-            String screenshotPath = SCREENSHOT_ALIRA_PATH.getValue() + "testCase017_" + System.currentTimeMillis() + ".png";
-            screenshotUtil.takeScreenshot(page, SCREENSHOT_ALIRA_PATH, "testCase017_" + System.currentTimeMillis());
+            String screenshotPath = screenshotUtil.takeScreenshot(page, SCREENSHOT_ALIRA_PATH, "testCase017");
 
             if (!stillExists) {
                 log.info("✅ Deposit promotion ID '{}' deleted successfully. Screenshot: {}", deletedId, screenshotPath);

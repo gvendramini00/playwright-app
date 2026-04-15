@@ -38,7 +38,7 @@ public class CasinoGranMadridTestService {
             Page page = browser.newPage();
             page.navigate("https://casinogranmadridonline.pre.tecnalis.com/");
             String title = page.title();
-            screenshotUtil.takeScreenshot(page, SCREENSHOT_CGM_PATH, "testCase001_" + System.currentTimeMillis());
+            screenshotUtil.takeScreenshot(page, SCREENSHOT_CGM_PATH, "testCase001");
             browser.close();
             return "✅ Site loaded. Title: " + title;
         } catch (Exception e) {
@@ -68,7 +68,7 @@ public class CasinoGranMadridTestService {
 
             page.waitForTimeout(1000);
 
-            screenshotUtil.takeScreenshot(page, SCREENSHOT_CGM_PATH, "testCase002_" + System.currentTimeMillis());
+            screenshotUtil.takeScreenshot(page, SCREENSHOT_CGM_PATH, "testCase002");
 
             boolean headingVisible = heading.isVisible();
 
@@ -128,7 +128,7 @@ public class CasinoGranMadridTestService {
             log.info("✅ Camera and document capture prompt visible");
 
             page.waitForTimeout(1500);
-            screenshotUtil.takeScreenshot(page, SCREENSHOT_CGM_PATH, "testCase003_" + System.currentTimeMillis());
+            screenshotUtil.takeScreenshot(page, SCREENSHOT_CGM_PATH, "testCase003");
 
             browser.close();
             return "✅ Veridas Fast Register opened and camera capture screen visible.";
@@ -199,19 +199,18 @@ public class CasinoGranMadridTestService {
                 for (int i = 0; i < errorLocator.count(); i++) {
                     if (errorLocator.nth(i).isVisible()) {
                         String errorText = errorLocator.nth(i).innerText();
-                        screenshotUtil.takeScreenshot(page, SCREENSHOT_CGM_PATH, "testCase004_failed_" + System.currentTimeMillis());
+                        screenshotUtil.takeScreenshot(page, SCREENSHOT_CGM_PATH, "testCase004_failed");
                         throw new RuntimeException("❌ Registration failed: " + errorText);
                     }
                 }
             }
 
             if (page.url().equals(beforeSubmitUrl)) {
-                screenshotUtil.takeScreenshot(page, SCREENSHOT_CGM_PATH, "testCase004_failed_no_redirect_" + System.currentTimeMillis());
+                screenshotUtil.takeScreenshot(page, SCREENSHOT_CGM_PATH, "testCase004_failed_no_redirect");
                 throw new RuntimeException("❌ Registration failed: Page did not proceed after submitting.");
             }
 
-            String screenshotPath = "screenshots/testCase004_" + System.currentTimeMillis() + ".png";
-            screenshotUtil.takeScreenshot(page, SCREENSHOT_CGM_PATH, "testCase004_" + System.currentTimeMillis());
+            String screenshotPath = screenshotUtil.takeScreenshot(page, SCREENSHOT_CGM_PATH, "testCase004");
 
             browser.close();
             RegistrationDataUtils.logGeneratedUser(dto.email(), dto.nationalId(), dto.alias(), screenshotPath);
@@ -244,7 +243,7 @@ public class CasinoGranMadridTestService {
 
             String afterClickURL = page.url();
 
-            screenshotUtil.takeScreenshot(page, SCREENSHOT_CGM_PATH, "testCase005_" + System.currentTimeMillis());
+            screenshotUtil.takeScreenshot(page, SCREENSHOT_CGM_PATH, "testCase005");
 
 
             if (currentURL.equals(afterClickURL)) {
@@ -300,8 +299,7 @@ public class CasinoGranMadridTestService {
                 if (duplicateModal.nth(i).isVisible()) {
                     String text = duplicateModal.nth(i).innerText().trim();
                     if (text.contains("DNI/NIE ya está en uso")) {
-                        String screenshotPath = "screenshots/testCase006_duplicate_dni_" + System.currentTimeMillis() + ".png";
-                        screenshotUtil.takeScreenshot(page, SCREENSHOT_CGM_PATH, "testCase006_duplicate_dni_" + System.currentTimeMillis());
+                        String screenshotPath = screenshotUtil.takeScreenshot(page, SCREENSHOT_CGM_PATH, "testCase006_duplicate_dni");
 
                         log.info("✅ Duplicate DNI/NIE detected for user '{}' (DNI: {}). Screenshot saved: {}", dto.alias(), dto.nationalId(), screenshotPath);
                         browser.close();
@@ -310,8 +308,7 @@ public class CasinoGranMadridTestService {
                 }
             }
 
-            String failPath = "screenshots/testCase006_no_modal_" + System.currentTimeMillis() + ".png";
-            screenshotUtil.takeScreenshot(page, SCREENSHOT_CGM_PATH, "testCase006_no_modal_" + System.currentTimeMillis());
+            String failPath = screenshotUtil.takeScreenshot(page, SCREENSHOT_CGM_PATH, "testCase006_no_modal");
             log.warn("❌ Expected modal did not appear. Screenshot: {}", failPath);
 
             browser.close();

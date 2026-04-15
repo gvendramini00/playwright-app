@@ -14,19 +14,21 @@ import java.nio.file.Paths;
 @Component
 public class ScreenshotUtil {
 
-    public void takeScreenshot(Page page, AliraVariables variable, String fileName) {
+    public String takeScreenshot(Page page, AliraVariables variable, String fileName) {
         Path directoryPath = Paths.get(variable.getValue());
 
         try {
             // Ensure the specific directory exists before saving
             Files.createDirectories(directoryPath);
 
-            Path filePath = directoryPath.resolve(fileName + ".png");
+            Path filePath = directoryPath.resolve(fileName + "_" + System.currentTimeMillis() + ".png");
             page.screenshot(new Page.ScreenshotOptions().setPath(filePath));
 
             log.info("Screenshot saved to: {}", filePath);
+            return filePath.toString();
         } catch (IOException e) {
             log.error("Could not create/access directory: {}", directoryPath, e);
+            return "";
         }
     }
 }

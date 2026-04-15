@@ -48,7 +48,7 @@ public class AliraTestServiceImpl implements AliraTestService {
             page.getByRole(AriaRole.LINK, new Page.GetByRoleOptions().setName("Sign in")).click();
             page.waitForSelector("text=Alira Dashboard", new Page.WaitForSelectorOptions().setState(WaitForSelectorState.ATTACHED).setTimeout(5000));
             page.waitForLoadState(LoadState.NETWORKIDLE);
-            screenshotUtil.takeScreenshot(page, SCREENSHOT_ALIRA_PATH, "testCase001_" + System.currentTimeMillis());
+            screenshotUtil.takeScreenshot(page, SCREENSHOT_ALIRA_PATH, "testCase001");
 
             log.info("Login successful for user: {}", aliraUsername);
             return String.format("✅ User %s logged in successfully.", aliraUsername);
@@ -73,7 +73,7 @@ public class AliraTestServiceImpl implements AliraTestService {
             page.locator("#playerSearcherBtn").click();
             page.waitForSelector("text=Player Profile", new Page.WaitForSelectorOptions().setState(WaitForSelectorState.ATTACHED).setTimeout(5000));
             page.waitForLoadState(LoadState.NETWORKIDLE);
-            screenshotUtil.takeScreenshot(page, SCREENSHOT_ALIRA_PATH,"testCase002_" + System.currentTimeMillis());
+            screenshotUtil.takeScreenshot(page, SCREENSHOT_ALIRA_PATH, "testCase002");
 
             log.info("Player profile successful for player: {}", ALIRA_PLAYER.getValue());
             return "✅ Player Profile loaded correctly!";
