@@ -59,6 +59,18 @@ public class AliraMassTestServiceImpl implements AliraMassTestService {
             log.info("{} {} ({}ms)", passed ? "✅" : "❌", def.id(), duration);
         }
 
+        long totalMs = results.stream().mapToLong(AliraTestResult::durationMs).sum();
+        long passed  = results.stream().filter(AliraTestResult::passed).count();
+        long failed  = results.size() - passed;
+
+        log.info("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━");
+        log.info("Alira mass test finished");
+        log.info("  Total:    {}", results.size());
+        log.info("  ✅ Passed: {}", passed);
+        log.info("  ❌ Failed: {}", failed);
+        log.info("  Duration: {}", formatDuration(totalMs));
+        log.info("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━");
+
         return generateExcel(results);
     }
 
@@ -162,8 +174,8 @@ public class AliraMassTestServiceImpl implements AliraMassTestService {
             CellStyle failStatusStyle = buildStatusStyle(workbook, new XSSFColor(new byte[]{(byte)192, (byte)0, (byte)0}, null));
             CellStyle linkStyle     = buildLinkStyle(workbook);
 
-            long passed = results.stream().filter(AliraTestResult::passed).count();
-            long failed = results.size() - passed;
+            long passed  = results.stream().filter(AliraTestResult::passed).count();
+            long failed  = results.size() - passed;
             long totalMs = results.stream().mapToLong(AliraTestResult::durationMs).sum();
 
             // Row 0 — Title
@@ -179,15 +191,15 @@ public class AliraMassTestServiceImpl implements AliraMassTestService {
             summaryRow.setHeightInPoints(20);
             Cell summaryCell = summaryRow.createCell(0);
             summaryCell.setCellValue(String.format(
-                    "Total: %d   |   Passed: %d   |   Failed: %d   |   Total duration: %.1fs",
-                    results.size(), passed, failed, totalMs / 1000.0));
+                    "Total: %d   |   Passed: %d   |   Failed: %d   |   Total duration: %s  (%,.0f s)",
+                    results.size(), passed, failed, formatDuration(totalMs), totalMs / 1000.0));
             summaryCell.setCellStyle(summaryStyle);
             sheet.addMergedRegion(new CellRangeAddress(1, 1, 0, 7));
 
             // Row 2 — Headers
             Row headerRow = sheet.createRow(2);
             headerRow.setHeightInPoints(18);
-            String[] headers = {"#", "Test Case", "Description", "Status", "Message", "Screenshot", "Duration (ms)", "Ran At"};
+            String[] headers = {"#", "Test Case", "Description", "Status", "Message", "Screenshot", "Duration", "Ran At"};
             for (int i = 0; i < headers.length; i++) {
                 Cell cell = headerRow.createCell(i);
                 cell.setCellValue(headers[i]);
@@ -237,7 +249,7 @@ public class AliraMassTestServiceImpl implements AliraMassTestService {
                 }
 
                 Cell durCell = row.createCell(6);
-                durCell.setCellValue(r.durationMs());
+                durCell.setCellValue(formatDuration(r.durationMs()));
                 durCell.setCellStyle(rowStyle);
 
                 Cell timeCell = row.createCell(7);
@@ -340,6 +352,24 @@ public class AliraMassTestServiceImpl implements AliraMassTestService {
         style.setBorderBottom(BorderStyle.THIN);
         style.setBorderLeft(BorderStyle.THIN);
         style.setBorderRight(BorderStyle.THIN);
+    }
+
+    // -------------------------------------------------------------------------
+    // Duration formatting
+    // -------------------------------------------------------------------------
+
+    private String formatDuration(long ms) {
+        long totalSeconds = ms / 1000;
+        long hours   = totalSeconds / 3600;
+        long minutes = (totalSeconds % 3600) / 60;
+        long seconds = totalSeconds % 60;
+        if (hours > 0) {
+            return String.format("%dh %dm %ds", hours, minutes, seconds);
+        } else if (minutes > 0) {
+            return String.format("%dm %ds", minutes, seconds);
+        } else {
+            return String.format("%ds", seconds);
+        }
     }
 
     // -------------------------------------------------------------------------
