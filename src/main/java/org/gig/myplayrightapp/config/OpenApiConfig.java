@@ -41,6 +41,9 @@ public class OpenApiConfig {
                                 .name("Alira — Marketing Tab")
                                 .description("Tests for the Marketing tab in the Alira Back Office — covers Dashboard, Deposit Promotions (read, create, edit, delete)"),
                         new Tag()
+                                .name("Alira — Widgets")
+                                .description("Tests for Player Profile widgets in the Alira Back Office — covers Attached Documentation (add, edit, delete)"),
+                        new Tag()
                                 .name("Alira — Mass Test Runner")
                                 .description("Runs all 17 Alira test cases in sequence and returns a downloadable Excel report with results and screenshot references"),
                         new Tag()
