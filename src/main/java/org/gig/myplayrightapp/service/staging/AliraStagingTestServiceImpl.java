@@ -1,5 +1,8 @@
 package org.gig.myplayrightapp.service.staging;
 
+import com.microsoft.playwright.Locator;
+import com.microsoft.playwright.Page;
+import com.microsoft.playwright.options.AriaRole;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.gig.myplayrightapp.exception.PlayerSearchException;
@@ -24,6 +27,9 @@ public class AliraStagingTestServiceImpl implements AliraStagingTestService {
 
     @Value("${alira.staging.username}")
     private String stagingUsername;
+
+    @Value("${alira.staging.base-url}")
+    private String stagingBaseUrl;
 
     @Override
     public String testCase001LoginTest() {
@@ -60,6 +66,55 @@ public class AliraStagingTestServiceImpl implements AliraStagingTestService {
         } catch (Exception e) {
             log.error("Staging Player Profile navigation failed", e);
             return "KO — Error at staging Player Profile navigation: " + e.getMessage();
+        }
+    }
+
+    @Override
+    public String testCase003CmsWebsiteEditBanner() {
+        try {
+            return playwrightUtil.withPage(page -> {
+                log.info("Starting staging CMS Website Banner Edit test for user: {}", stagingUsername);
+                aliraStagingLoginUtil.login(page);
+
+                try {
+                    page.navigate(stagingBaseUrl + "index.aml");
+                    page.getByRole(AriaRole.LINK, new Page.GetByRoleOptions().setName(" Website")).click();
+                    page.getByRole(AriaRole.LINK, new Page.GetByRoleOptions().setName("CMS")).click();
+
+                    Locator bannersTab = page.getByRole(AriaRole.TAB, new Page.GetByRoleOptions().setName("Banners"));
+                    page.waitForTimeout(2000);
+                    bannersTab.click();
+
+                    page.getByRole(AriaRole.BUTTON, new Page.GetByRoleOptions().setName("Nothing Selected")).click();
+                    page.getByRole(AriaRole.LISTBOX).getByRole(AriaRole.OPTION, new Locator.GetByRoleOptions().setName("Banner Home Landscape -")).click();
+                    page.waitForTimeout(2000);
+
+                    page.getByRole(AriaRole.LINK, new Page.GetByRoleOptions().setName("- Banner Landscape 1 template")).click();
+                    page.waitForTimeout(2000);
+
+                    page.getByLabel("Name", new Page.GetByLabelOptions().setExact(true)).click();
+                    page.getByLabel("Name", new Page.GetByLabelOptions().setExact(true)).fill("Banner Landscape 1 template edit");
+                    page.getByRole(AriaRole.BUTTON, new Page.GetByRoleOptions().setName("Save")).click();
+
+                    page.getByLabel("Name", new Page.GetByLabelOptions().setExact(true)).click();
+                    page.getByLabel("Name", new Page.GetByLabelOptions().setExact(true)).fill("Banner Landscape 1 template");
+                    page.getByRole(AriaRole.BUTTON, new Page.GetByRoleOptions().setName("Save")).click();
+                    page.waitForTimeout(1000);
+                    page.getByText("Success: Saved").click();
+
+                } catch (Exception e) {
+                    String screenshotPath = screenshotUtil.takeScreenshot(page, SCREENSHOT_STAGING_PATH, "staging_testCase003_failed");
+                    log.error("CMS Website Banner Edit failed. Screenshot: {}", screenshotPath, e);
+                    return "KO — CMS Website Banner Edit failed: " + e.getMessage() + ". Screenshot: " + screenshotPath;
+                }
+
+                String screenshotPath = screenshotUtil.takeScreenshot(page, SCREENSHOT_STAGING_PATH, "staging_testCase003");
+                log.info("Staging CMS Website Banner Edit successful. Screenshot: {}", screenshotPath);
+                return "OK — CMS Website Banner edited and restored successfully. Screenshot: " + screenshotPath;
+            });
+        } catch (Exception e) {
+            log.error("Unexpected error in testCase003CmsWebsiteEditBanner", e);
+            return "KO — Unexpected error in CMS Website Banner Edit: " + e.getMessage();
         }
     }
 }

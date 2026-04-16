@@ -66,7 +66,9 @@ public class AliraStagingMassTestServiceImpl implements AliraStagingMassTestServ
                 new TestDefinition("NL2-TC-001", "Login to Alira Staging Back Office",
                         aliraStagingTestService::testCase001LoginTest),
                 new TestDefinition("NL2-TC-002", "Navigate to Staging Player Profile",
-                        aliraStagingTestService::testCase002NavigatePlayerProfile)
+                        aliraStagingTestService::testCase002NavigatePlayerProfile),
+                new TestDefinition("NL2-TC-003", "Website → CMS → Banners → edit and restore Banner Landscape 1",
+                        aliraStagingTestService::testCase003CmsWebsiteEditBanner)
         );
     }
 

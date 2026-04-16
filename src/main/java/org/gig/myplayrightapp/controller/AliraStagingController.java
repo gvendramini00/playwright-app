@@ -61,6 +61,21 @@ public class AliraStagingController {
     }
 
     @Operation(
+            summary = "NL2-TC-003 — Staging Dashboard - CMS - Website - Edit Banner",
+            description = "Logs in to Alira Staging and navigates to Dashboard - CMS - Website - Edit Banner and edit some information." +
+                    "A screenshot is saved to screenshots/staging/ on completion."
+    )
+    @ApiResponse(responseCode = "200", description = "OK — Banner Edited", content = @Content(mediaType = "text/plain"))
+    @ApiResponse(responseCode = "500", description = "KO — with error details on failure", content = @Content(mediaType = "text/plain"))
+    @GetMapping("/testCase003")
+    public ResponseEntity<String> testCase003() {
+        String result = aliraStagingTestService.testCase003CmsWebsiteEditBanner();
+        return result.startsWith("OK") || result.startsWith("SKIPPED")
+                ? ResponseEntity.ok(result)
+                : ResponseEntity.internalServerError().body(result);
+    }
+
+    @Operation(
         summary = "Staging Mass Test Runner",
         description = "Runs all Alira Staging test cases in sequence and returns a downloadable Excel report with results and screenshot references."
     )
