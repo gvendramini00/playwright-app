@@ -5,6 +5,7 @@ import io.swagger.v3.oas.models.info.Contact;
 import io.swagger.v3.oas.models.info.Info;
 import io.swagger.v3.oas.models.info.License;
 import io.swagger.v3.oas.models.tags.Tag;
+import org.springdoc.core.models.GroupedOpenApi;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -12,6 +13,8 @@ import java.util.List;
 
 @Configuration
 public class OpenApiConfig {
+
+    // ── Global metadata ───────────────────────────────────────────────────────
 
     @Bean
     public OpenAPI customOpenAPI() {
@@ -28,33 +31,61 @@ public class OpenApiConfig {
                                 .name("MIT License")
                                 .url("https://opensource.org/licenses/MIT")))
                 .tags(List.of(
-                        new Tag()
-                                .name("Alira — Core Tests")
+                        new Tag().name("Alira — Core Tests")
                                 .description("Login and player profile navigation tests for the Alira Back Office"),
-                        new Tag()
-                                .name("Alira — Games Tab")
+                        new Tag().name("Alira — Games Tab")
                                 .description("Navigation tests for the Games tab in the Alira Back Office (Rooms, Providers, Themes & Tags, Exchange Profile)"),
-                        new Tag()
-                                .name("Alira — Website Tab")
+                        new Tag().name("Alira — Website Tab")
                                 .description("Navigation tests for the Website tab in the Alira Back Office (CMS, Configuration)"),
-                        new Tag()
-                                .name("Alira — Marketing Tab")
+                        new Tag().name("Alira — Marketing Tab")
                                 .description("Tests for the Marketing tab in the Alira Back Office — covers Dashboard, Deposit Promotions (read, create, edit, delete)"),
-                        new Tag()
-                                .name("Alira — Widgets")
+                        new Tag().name("Alira — Widgets")
                                 .description("Tests for Player Profile widgets in the Alira Back Office — covers Attached Documentation (add, edit, delete)"),
-                        new Tag()
-                                .name("Alira — Staging Tests")
-                                .description("Tests for the Alira Staging Back Office (gms-staging.pre.tecnalis.com) — separate DB at 10.64.134.11. Includes a mass test runner that generates an Excel report."),
-                        new Tag()
-                                .name("Alira — Mass Test Runner")
-                                .description("Runs all 17 Alira test cases in sequence and returns a downloadable Excel report with results and screenshot references"),
-                        new Tag()
-                                .name("Casino Gran Madrid — Registration Tests")
+                        new Tag().name("Alira — Mass Test Runner")
+                                .description("Runs all Alira pre-production test cases in sequence and returns a downloadable Excel report"),
+                        new Tag().name("Alira — Staging Tests")
+                                .description("Tests for the Alira Staging Back Office (gms-staging.pre.tecnalis.com) — separate DB at 10.64.134.11"),
+                        new Tag().name("Alira — Staging Mass Test Runner")
+                                .description("Runs all Alira Staging test cases in sequence and returns a downloadable Excel report"),
+                        new Tag().name("Casino Gran Madrid — Registration Tests")
                                 .description("Automated tests for the Casino Gran Madrid pre-production site — covers site access, registration flows and validation"),
-                        new Tag()
-                                .name("Golden Park PT — Registration Tests")
+                        new Tag().name("Golden Park PT — Registration Tests")
                                 .description("Automated tests for the Golden Park Portugal dev site — covers manual registration and duplicate NIF validation")
                 ));
+    }
+
+    // ── Swagger UI groups (one page per environment / product) ────────────────
+
+    @Bean
+    public GroupedOpenApi aliraPreGroup() {
+        return GroupedOpenApi.builder()
+                .group("1 — Alira Pre-Production")
+                .pathsToMatch("/api/test/alira/**")
+                .pathsToExclude("/api/test/alira-staging/**")
+                .build();
+    }
+
+    @Bean
+    public GroupedOpenApi aliraStagingGroup() {
+        return GroupedOpenApi.builder()
+                .group("2 — Alira Staging")
+                .pathsToMatch("/api/test/alira-staging/**")
+                .build();
+    }
+
+    @Bean
+    public GroupedOpenApi cgmGroup() {
+        return GroupedOpenApi.builder()
+                .group("3 — Casino Gran Madrid Pre")
+                .pathsToMatch("/api/test/cgm/**")
+                .build();
+    }
+
+    @Bean
+    public GroupedOpenApi gpptGroup() {
+        return GroupedOpenApi.builder()
+                .group("4 — Golden Park Portugal Pre")
+                .pathsToMatch("/api/test/gp-pt/**")
+                .build();
     }
 }

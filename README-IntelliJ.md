@@ -1,20 +1,16 @@
-# MyPlayRightApp — Setup Guide for IntelliJ IDEA
+# MyPlayRightApp — IntelliJ IDEA Setup Guide
 
-A Spring Boot REST API that exposes Playwright browser automation tests as HTTP endpoints.
-Trigger a test case by calling its URL; the app launches a browser, executes the flow, saves a screenshot, and returns a result string.
-
-Supports three brands: **Alira** (back office), **Casino Gran Madrid (CGM)**, and **Golden Park Portugal (GP-PT)**.
+> For project overview, endpoints, and environment variables see [README.md](README.md).
 
 ---
 
 ## Requirements
 
-| Tool    | Version |
-|---------|---------|
-| Java    | 17+     |
-| Maven   | 3.6+    |
-| MySQL   | Accessible dev/pre-prod instances for CGM and GP-PT |
-| IntelliJ IDEA | Community or Ultimate |
+| Tool | Version |
+|------|---------|
+| Java | 17+ |
+| Maven | 3.6+ |
+| IntelliJ IDEA | Community or Ultimate (2022.1+) |
 
 ---
 
@@ -23,7 +19,7 @@ Supports three brands: **Alira** (back office), **Casino Gran Madrid (CGM)**, an
 1. Open IntelliJ IDEA
 2. Go to **File → New → Project from Version Control**
 3. Paste the repository URL and click **Clone**
-4. IntelliJ will detect the Maven project automatically — click **Load Maven Project** if prompted
+4. IntelliJ detects the Maven project automatically — click **Load Maven Project** if prompted
 
 ---
 
@@ -36,64 +32,73 @@ Supports three brands: **Alira** (back office), **Casino Gran Madrid (CGM)**, an
 
 ---
 
-## 3. Configure Environment Variables
+## 3. Install the Lombok Plugin
 
-Credentials are never stored in any committed file. Set them in the run configuration.
+1. Go to **File → Settings → Plugins**
+2. Search for **Lombok** and install it
+3. Restart IntelliJ when prompted
+4. Go to **File → Settings → Build, Execution, Deployment → Compiler → Annotation Processors**
+5. Check **Enable annotation processing** → **Apply**
 
-The steps differ slightly between **Ultimate** and **Community** editions.
+> Without this, `@Slf4j`, `@RequiredArgsConstructor`, and other Lombok annotations show as errors.
 
 ---
 
-### IntelliJ IDEA Ultimate
+## 4. Configure Environment Variables
 
-Ultimate includes native Spring Boot run configuration support.
+Credentials are never stored in any committed file. There are two ways to load them.
+
+### Option A — EnvFile plugin (recommended)
+
+The EnvFile plugin loads your `.env` file automatically on every run — no manual copy-pasting needed.
+
+1. Go to **File → Settings → Plugins → Marketplace**
+2. Search for **EnvFile** (by Borys Pierov) and install it
+3. Restart IntelliJ
+4. Copy `.env.example` to `.env` in the project root and fill in your credentials
+5. Open **Run → Edit Configurations → MyPlayRightAppApplication**
+6. Go to the **EnvFile** tab → check **Enable EnvFile** → click **+** → select your `.env` file
+7. Click **OK**
+
+The app now picks up all credentials from `.env` on every run.
+
+### Option B — Environment variables field
 
 1. Open **Run → Edit Configurations**
-2. If no configuration exists yet, click **+** and choose **Spring Boot**
+2. Select **MyPlayRightAppApplication** (or create one — see below)
+3. Click the **`...`** icon next to **Environment variables**
+4. Add each variable from `.env.example` with your own values
+5. Click **OK**
+
+---
+
+## 5. Create a Run Configuration (if none exists)
+
+### Ultimate Edition
+
+1. Open **Run → Edit Configurations → +**
+2. Choose **Spring Boot**
 3. Set **Main class** to `org.gig.myplayrightapp.MyPlayRightAppApplication`
-4. Click the **`...`** icon next to **Environment variables**
-5. Paste the following block, replacing each value with your own:
+4. Apply environment variables as above
 
-```
-SPRING_PROFILES_ACTIVE=dev;ALIRA_USERNAME=your_alira_user;ALIRA_PASSWORD=your_alira_password;CGM_DB_USERNAME=your_db_user;CGM_DB_PASSWORD=your_db_password;GPPT_DB_USERNAME=your_db_user;GPPT_DB_PASSWORD=your_db_password
-```
+### Community Edition
 
-6. Click **OK**
+Community does not include the Spring Boot config type. Use **Application** instead — it works identically.
 
----
-
-### IntelliJ IDEA Community
-
-Community does not include the Spring Boot run config type. Use a plain **Application** config instead — it works identically for running the app.
-
-1. Open **Run → Edit Configurations**
-2. Click **+** and choose **Application**
+1. Open **Run → Edit Configurations → +**
+2. Choose **Application**
 3. Set **Name** to `MyPlayRightAppApplication`
 4. Set **Main class** to `org.gig.myplayrightapp.MyPlayRightAppApplication`
-   - Click the folder icon or type the class name and press **Enter** to let IntelliJ resolve it
-5. Make sure **Module** is set to `myplayrightapp` (or whichever module appears in the list)
-6. Click the **`...`** icon next to **Environment variables**
-7. Paste the following block, replacing each value with your own:
+5. Set **Module** to `myplayrightapp`
+6. Apply environment variables as above
 
-```
-SPRING_PROFILES_ACTIVE=dev;ALIRA_USERNAME=your_alira_user;ALIRA_PASSWORD=your_alira_password;CGM_DB_USERNAME=your_db_user;CGM_DB_PASSWORD=your_db_password;GPPT_DB_USERNAME=your_db_user;GPPT_DB_PASSWORD=your_db_password
-```
-
-8. Click **OK**
-
-> **Tip for Community users:** If you do not see the `...` icon next to Environment variables, click inside the field and look for the small icon at the right edge of the text box — it opens the same variable editor.
+> If the `...` icon is not visible next to Environment variables, click inside the field — the icon appears at the right edge of the text box.
 
 ---
 
-IntelliJ stores these values in your local run configuration only — they are never committed to Git.
+## 6. Install Playwright Browsers
 
-> See `.env.example` at the project root for the full list of variables and their descriptions.
-
----
-
-## 4. Install Playwright Browsers
-
-Open the **Terminal** tab at the bottom of IntelliJ and run:
+Open the **Terminal** tab at the bottom of IntelliJ and run once after cloning:
 
 **PowerShell (Windows):**
 ```powershell
@@ -105,19 +110,11 @@ Open the **Terminal** tab at the bottom of IntelliJ and run:
 ./mvnw exec:java -Dexec.mainClass=com.microsoft.playwright.CLI -Dexec.args="install --with-deps chromium"
 ```
 
-This downloads the Chromium binary used by all tests. Run once after cloning.
-
 ---
 
-## 5. Build the Project
+## 7. Build the Project
 
-In the **Maven** side panel (right side), expand the project and double-click:
-
-```
-Lifecycle → package
-```
-
-Or run from the terminal:
+In the **Maven** panel (right side), double-click **Lifecycle → package**, or run from the terminal:
 
 ```bash
 mvn clean package -DskipTests
@@ -125,13 +122,11 @@ mvn clean package -DskipTests
 
 ---
 
-## 6. Run the Application
+## 8. Run the Application
 
-Click the green **Run** button next to `MyPlayRightAppApplication`, or press **Shift+F10**.
+Click the green **Run** button or press **Shift+F10**.
 
-The app starts on `http://localhost:8080`.
-
-To confirm it is running, open your browser and go to:
+The app starts on `http://localhost:8080`. Confirm it is running:
 
 ```
 http://localhost:8080/swagger-ui/index.html
@@ -141,21 +136,19 @@ http://localhost:8080/swagger-ui/index.html
 
 ## Environment Profiles
 
-| Profile       | Headless | SQL logging | When to use          |
-|---------------|----------|-------------|----------------------|
-| *(default)*   | `true`   | `true`      | CI / headless runs   |
-| `dev`         | `false`  | `true`      | Local — watch browser|
-| `prod`        | `true`   | `false`     | Production           |
+| Profile | Headless | SQL logging | When to use |
+|---------|----------|-------------|-------------|
+| *(default)* | `true` | `true` | CI / headless |
+| `dev` | `false` | `true` | Local — watch the browser |
+| `prod` | `true` | `false` | Production |
 
-The run configuration above sets `SPRING_PROFILES_ACTIVE=dev`, which opens a visible browser window when tests run. Remove that variable or change it to `prod` for fully headless execution.
+Set `SPRING_PROFILES_ACTIVE=dev` in your `.env` or run configuration to open a visible browser window during test runs.
 
 ---
 
-## 7. Record a New Test
+## Recording New Tests
 
-Use the Playwright code generator to record interactions on any page.
-
-Open the IntelliJ **Terminal** and run:
+Open the IntelliJ Terminal and run:
 
 **PowerShell (Windows):**
 ```powershell
@@ -167,112 +160,30 @@ Open the IntelliJ **Terminal** and run:
 ./mvnw exec:java -Dexec.mainClass=com.microsoft.playwright.CLI -Dexec.args="codegen https://your-site-url.com"
 ```
 
-A browser and a code panel will open. Interact with the page and copy the generated Java selectors into your service implementation.
+A browser and a code panel open. Interact with the page and copy the generated Java selectors into your service implementation.
 
 ---
 
-## Test Endpoints
-
-Base URL: `http://localhost:8080/api/test/`
-
-### Alira — Back Office
-
-| Endpoint | Description |
-|----------|-------------|
-| `GET /api/test/alira/testCase001` | Login to Alira Back Office |
-| `GET /api/test/alira/testCase002` | Navigate to Player Profile |
-| `GET /api/test/alira/navigation/games/testCase003` | Navigate → Games → Rooms |
-| `GET /api/test/alira/navigation/games/testCase004` | Navigate → Games → Process Rooms |
-| `GET /api/test/alira/navigation/games/testCase005` | Navigate → Games → Lobby Rooms |
-| `GET /api/test/alira/navigation/games/testCase006` | Navigate → Games → Providers |
-| `GET /api/test/alira/navigation/games/testCase007` | Navigate → Games → Themes & Tags |
-| `GET /api/test/alira/navigation/games/testCase008` | Navigate → Games → Exchange Profile |
-| `GET /api/test/alira/navigation/website/testCase009` | Navigate → Website → CMS |
-| `GET /api/test/alira/navigation/website/testCase010` | Navigate → Website → Configuration → CMS Access |
-| `GET /api/test/alira/navigation/website/testCase011` | Navigate → Website → Configuration → Constants |
-| `GET /api/test/alira/navigation/marketing/testCase012` | Navigate → Dashboard — verify table has data |
-| `GET /api/test/alira/navigation/marketing/testCase013` | Navigate → Marketing → Bonus → Deposit Promotions — verify table has data |
-| `GET /api/test/alira/navigation/marketing/testCase014` | Navigate → Marketing → Bonus → Deposit Promotions → click New — verify modal appears |
-| `GET /api/test/alira/navigation/marketing/testCase015` | Navigate → Marketing → Bonus → Deposit Promotions → create a new deposit promotion |
-| `GET /api/test/alira/navigation/marketing/testCase016` | Navigate → Marketing → Bonus → Deposit Promotions → edit the first row and verify the update |
-| `GET /api/test/alira/navigation/marketing/testCase017` | Navigate → Marketing → Bonus → Deposit Promotions → delete the first row and verify removal |
-
-### Casino Gran Madrid (CGM)
-
-| Endpoint | Description |
-|----------|-------------|
-| `GET /api/test/cgm/testCase001` | Open pre-production site |
-| `GET /api/test/cgm/testCase002` | Click register button, validate modal |
-| `GET /api/test/cgm/testCase003` | Fast registration via Veridas (camera flow) |
-| `GET /api/test/cgm/testCase004` | Manual registration with a generated unique player |
-| `GET /api/test/cgm/testCase005` | Manual registration with missing name (validation check) |
-| `GET /api/test/cgm/testCase006` | Manual registration with duplicate DNI/NIE (duplicate check) |
-
-### Golden Park Portugal (GP-PT)
-
-| Endpoint | Description |
-|----------|-------------|
-| `GET /api/test/gp-pt/register` | Manual registration with a generated unique PT player |
-| `GET /api/test/gp-pt/register-duplicate` | Registration with duplicate NIF (duplicate check) |
-
----
-
-## Screenshots
-
-Every test saves a screenshot of its final state under `/screenshots/`.
-The folder is git-ignored. Screenshots are named after the test case (e.g., `testCase001.png`) or timestamped for runs that create unique data.
-
----
-
-## Generated Test Data
-
-Successful registration tests log the created user to `generated-users.csv` (email, national ID, alias, screenshot path). This file serves as an audit trail for test-created accounts.
-
----
-
-## Troubleshooting (Community Edition)
+## Troubleshooting
 
 **"Could not resolve placeholder" on startup**
-The app could not find one of the required environment variables. Open **Run → Edit Configurations**, select your `MyPlayRightAppApplication` config, and verify all variables are present in the **Environment variables** field. A missing or misspelled variable name will cause this error.
+A required environment variable is missing. Open **Run → Edit Configurations**, check the EnvFile tab or Environment variables field, and verify all variables from `.env.example` are present.
 
 **"Spring Boot" option not available when creating a run config**
-This is expected in Community Edition. Choose **Application** instead and set the main class manually to `org.gig.myplayrightapp.MyPlayRightAppApplication`.
+Expected in Community Edition. Choose **Application** instead and set the main class manually.
 
 **Maven panel not visible**
 Go to **View → Tool Windows → Maven**. If Maven is still not detected, right-click `pom.xml` → **Add as Maven Project**.
 
-**Lombok annotations not recognized (red underlines on `@Slf4j`, `@RequiredArgsConstructor`, etc.)**
-Install the Lombok plugin:
-1. Go to **File → Settings → Plugins**
-2. Search for **Lombok**
-3. Install and restart IntelliJ
-4. Go to **File → Settings → Build, Execution, Deployment → Compiler → Annotation Processors**
-5. Check **Enable annotation processing**
+**Lombok annotations show as errors (`@Slf4j`, `@RequiredArgsConstructor`, etc.)**
+Install the Lombok plugin (step 3) and enable annotation processing.
 
-**App starts but browser does not open**
-Make sure `SPRING_PROFILES_ACTIVE=dev` is set in the run configuration. Without it the app defaults to headless mode and no browser window appears.
+**Browser does not open during tests**
+Make sure `SPRING_PROFILES_ACTIVE=dev` is set. Without it the app defaults to headless mode.
 
 **Playwright browser not found on first run**
-Run the install command from the terminal (step 4) before triggering any test endpoint.
+Run the install command from step 6 before triggering any test endpoint.
 
 ---
 
-## Notes
-
-- Tests use a real database connection to avoid generating duplicate players. Ensure the DB is reachable before running registration tests.
-- `testCase003` (Veridas) requires camera permission — the browser is launched with `--use-fake-device-for-media-stream` so it works headless.
-- Timeouts and selectors can be adjusted in the corresponding service implementation class.
-
----
-
-## Dependencies
-
-- Java 17+
-- Spring Boot 3.5
-- Playwright for Java 1.44
-- Spring Data JPA + MySQL
-- SpringDoc OpenAPI (Swagger)
-
----
-
-© 2025 GIG Quality Team
+© 2026 GIG Quality Team
