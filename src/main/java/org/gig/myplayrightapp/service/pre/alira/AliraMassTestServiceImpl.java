@@ -1,8 +1,11 @@
-package org.gig.myplayrightapp.service;
+package org.gig.myplayrightapp.service.pre.alira;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.gig.myplayrightapp.dto.AliraTestResult;
+import org.gig.myplayrightapp.service.pre.alira.dashboard.AliraNavigateTabGamesService;
+import org.gig.myplayrightapp.service.pre.alira.dashboard.AliraNavigateTabMarketingService;
+import org.gig.myplayrightapp.service.pre.alira.dashboard.AliraNavigateTabWebsiteService;
 import org.gig.myplayrightapp.util.ExcelReportUtil;
 import org.springframework.stereotype.Service;
 

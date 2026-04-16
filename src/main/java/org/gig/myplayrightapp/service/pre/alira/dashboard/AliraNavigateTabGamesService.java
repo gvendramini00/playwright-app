@@ -1,4 +1,4 @@
-package org.gig.myplayrightapp.service;
+package org.gig.myplayrightapp.service.pre.alira.dashboard;
 
 public interface AliraNavigateTabGamesService {
     String testCase003NavigateTabGamesRoomsTest();

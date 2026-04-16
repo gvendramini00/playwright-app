@@ -3,7 +3,7 @@ package org.gig.myplayrightapp.util;
 import lombok.extern.slf4j.Slf4j;
 import org.gig.myplayrightapp.dto.InsertPlayerDTO;
 import org.gig.myplayrightapp.dto.InsertPlayerGpPtDTO;
-import org.gig.myplayrightapp.service.PlayerService;
+import org.gig.myplayrightapp.service.pre.PlayerService;
 
 import java.io.FileWriter;
 import java.io.IOException;

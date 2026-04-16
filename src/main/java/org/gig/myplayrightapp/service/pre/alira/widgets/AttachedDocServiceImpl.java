@@ -1,4 +1,4 @@
-package org.gig.myplayrightapp.service.widgets;
+package org.gig.myplayrightapp.service.pre.alira.widgets;
 
 import com.microsoft.playwright.Locator;
 import com.microsoft.playwright.Page;

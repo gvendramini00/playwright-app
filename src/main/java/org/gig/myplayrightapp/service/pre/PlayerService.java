@@ -1,4 +1,4 @@
-package org.gig.myplayrightapp.service;
+package org.gig.myplayrightapp.service.pre;
 
 import org.gig.myplayrightapp.dto.InsertPlayerDTO;
 

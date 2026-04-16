@@ -1,4 +1,4 @@
-package org.gig.myplayrightapp.service;
+package org.gig.myplayrightapp.service.pre;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
