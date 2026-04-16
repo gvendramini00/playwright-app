@@ -89,16 +89,16 @@ public class GoldenParkPtTestService {
                     }
                 }
                 if (!hasError && !page.url().equals(before)) {
-                    log.info("✅ GP PT registration submitted for '{}' (email: {}, NIF: {}, CC: {}). Screenshot: {}",
+                    log.info("GP PT registration submitted for '{}' (email: {}, NIF: {}, CC: {}). Screenshot: {}",
                             dto.alias(), dto.email(), dto.cuitCuil(), dto.nationalId(), shot);
-                    return "✅ Golden Park PT registration completed.";
+                    return "OK — Golden Park PT registration completed.";
                 }
-                log.warn("❌ GP PT registration did not proceed. Screenshot: {}", shot);
-                return "❌ Golden Park PT registration failed (errors or no navigation).";
+                log.warn("GP PT registration did not proceed. Screenshot: {}", shot);
+                return "KO — Golden Park PT registration failed (errors or no navigation).";
             });
         } catch (Exception e) {
-            log.error("❌ Error in GP PT registration flow", e);
-            return "❌ Golden Park PT registration error: " + e.getMessage();
+            log.error("Error in GP PT registration flow", e);
+            return "KO — Golden Park PT registration error: " + e.getMessage();
         }
     }
 
@@ -106,7 +106,7 @@ public class GoldenParkPtTestService {
     public String runDuplicateNifTest() {
         Optional<InsertPlayerDTO> maybeExisting = playerService.findAnyExistingPlayer();
         if (maybeExisting.isEmpty()) {
-            return "⚠️ GP PT duplicate test skipped: no existing player to duplicate.";
+            return "SKIPPED — GP PT duplicate test: no existing player to duplicate.";
         }
         var es = maybeExisting.get();
         try {
@@ -129,20 +129,20 @@ public class GoldenParkPtTestService {
                     String txt = alerts.nth(i).innerText().toLowerCase(Locale.ROOT);
                     if (txt.contains("já está em uso") || txt.contains("ja está em uso") || txt.contains("ya está en uso")) {
                         String shot = screenshotUtil.takeScreenshot(page, SCREENSHOT_GP_PATH, "duplicate_nif");
-                        log.info("✅ Duplicate NIF detected for user '{}' (NIF attempted: {}). Screenshot: {}",
+                        log.info("Duplicate NIF detected for user '{}' (NIF attempted: {}). Screenshot: {}",
                                 es.alias(), es.nationalId(), shot);
-                        return "✅ GP PT duplicate test passed: warning shown.";
+                        return "OK — GP PT duplicate test passed: warning shown.";
                     }
                 }
 
                 String fail = screenshotUtil.takeScreenshot(page, SCREENSHOT_GP_PATH, "gp_duplicate_nif_no_modal");
-                log.warn("❌ Expected duplicate NIF warning not found for '{}' (NIF attempted: {}). Screenshot: {}",
+                log.warn("Expected duplicate NIF warning not found for '{}' (NIF attempted: {}). Screenshot: {}",
                         es.alias(), es.nationalId(), fail);
-                return "❌ GP PT duplicate test failed: no warning detected.";
+                return "KO — GP PT duplicate test failed: no warning detected.";
             });
         } catch (Exception e) {
-            log.error("❌ Error in GP PT duplicate test", e);
-            return "❌ GP PT duplicate test error: " + e.getMessage();
+            log.error("Error in GP PT duplicate test", e);
+            return "KO — GP PT duplicate test error: " + e.getMessage();
         }
     }
 }

@@ -6,6 +6,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.gig.myplayrightapp.service.AliraNavigateTabGamesService;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -23,10 +24,14 @@ public class AliraNavigateTabGamesController {
         description = "Logs in, navigates to Games → Rooms and verifies the URL resolves to rooms.aml. " +
                       "A screenshot is saved to screenshots/alira/ on completion."
     )
-    @ApiResponse(responseCode = "200", description = "✅ with loaded URL on success, ❌ with expected vs actual URL on failure", content = @Content(mediaType = "text/plain"))
+    @ApiResponse(responseCode = "200", description = "OK — with loaded URL on success", content = @Content(mediaType = "text/plain"))
+    @ApiResponse(responseCode = "500", description = "KO — with expected vs actual URL, or error details on failure", content = @Content(mediaType = "text/plain"))
     @GetMapping("/testCase003")
-    public String testCase003() {
-        return aliraNavigateTabGamesService.testCase003NavigateTabGamesRoomsTest();
+    public ResponseEntity<String> testCase003() {
+        String result = aliraNavigateTabGamesService.testCase003NavigateTabGamesRoomsTest();
+        return result.startsWith("OK") || result.startsWith("SKIPPED")
+                ? ResponseEntity.ok(result)
+                : ResponseEntity.internalServerError().body(result);
     }
 
     @Operation(
@@ -34,10 +39,14 @@ public class AliraNavigateTabGamesController {
         description = "Logs in, navigates to Games → Process Rooms and verifies the URL resolves to processRooms.aml. " +
                       "A screenshot is saved to screenshots/alira/ on completion."
     )
-    @ApiResponse(responseCode = "200", description = "✅ with loaded URL on success, ❌ with expected vs actual URL on failure", content = @Content(mediaType = "text/plain"))
+    @ApiResponse(responseCode = "200", description = "OK — with loaded URL on success", content = @Content(mediaType = "text/plain"))
+    @ApiResponse(responseCode = "500", description = "KO — with expected vs actual URL, or error details on failure", content = @Content(mediaType = "text/plain"))
     @GetMapping("/testCase004")
-    public String testCase004() {
-        return aliraNavigateTabGamesService.testCase004NavigateTabGamesProcessRoomsTest();
+    public ResponseEntity<String> testCase004() {
+        String result = aliraNavigateTabGamesService.testCase004NavigateTabGamesProcessRoomsTest();
+        return result.startsWith("OK") || result.startsWith("SKIPPED")
+                ? ResponseEntity.ok(result)
+                : ResponseEntity.internalServerError().body(result);
     }
 
     @Operation(
@@ -45,10 +54,14 @@ public class AliraNavigateTabGamesController {
         description = "Logs in, navigates to Games → Lobby Rooms and verifies the URL resolves to lobby.aml. " +
                       "A screenshot is saved to screenshots/alira/ on completion."
     )
-    @ApiResponse(responseCode = "200", description = "✅ with loaded URL on success, ❌ with expected vs actual URL on failure", content = @Content(mediaType = "text/plain"))
+    @ApiResponse(responseCode = "200", description = "OK — with loaded URL on success", content = @Content(mediaType = "text/plain"))
+    @ApiResponse(responseCode = "500", description = "KO — with expected vs actual URL, or error details on failure", content = @Content(mediaType = "text/plain"))
     @GetMapping("/testCase005")
-    public String testCase005() {
-        return aliraNavigateTabGamesService.testCase005NavigateTabGamesLobbyRoomsTest();
+    public ResponseEntity<String> testCase005() {
+        String result = aliraNavigateTabGamesService.testCase005NavigateTabGamesLobbyRoomsTest();
+        return result.startsWith("OK") || result.startsWith("SKIPPED")
+                ? ResponseEntity.ok(result)
+                : ResponseEntity.internalServerError().body(result);
     }
 
     @Operation(
@@ -56,10 +69,14 @@ public class AliraNavigateTabGamesController {
         description = "Logs in, navigates to Games → Providers and verifies the URL resolves to providers.aml. " +
                       "A screenshot is saved to screenshots/alira/ on completion."
     )
-    @ApiResponse(responseCode = "200", description = "✅ with loaded URL on success, ❌ with expected vs actual URL on failure", content = @Content(mediaType = "text/plain"))
+    @ApiResponse(responseCode = "200", description = "OK — with loaded URL on success", content = @Content(mediaType = "text/plain"))
+    @ApiResponse(responseCode = "500", description = "KO — with expected vs actual URL, or error details on failure", content = @Content(mediaType = "text/plain"))
     @GetMapping("/testCase006")
-    public String testCase006() {
-        return aliraNavigateTabGamesService.testCase006NavigateTabGamesProvidersTest();
+    public ResponseEntity<String> testCase006() {
+        String result = aliraNavigateTabGamesService.testCase006NavigateTabGamesProvidersTest();
+        return result.startsWith("OK") || result.startsWith("SKIPPED")
+                ? ResponseEntity.ok(result)
+                : ResponseEntity.internalServerError().body(result);
     }
 
     @Operation(
@@ -67,10 +84,14 @@ public class AliraNavigateTabGamesController {
         description = "Logs in, navigates to Games → Themes and Tags and verifies the URL resolves to themesTags.aml. " +
                       "A screenshot is saved to screenshots/alira/ on completion."
     )
-    @ApiResponse(responseCode = "200", description = "✅ with loaded URL on success, ❌ with expected vs actual URL on failure", content = @Content(mediaType = "text/plain"))
+    @ApiResponse(responseCode = "200", description = "OK — with loaded URL on success", content = @Content(mediaType = "text/plain"))
+    @ApiResponse(responseCode = "500", description = "KO — with expected vs actual URL, or error details on failure", content = @Content(mediaType = "text/plain"))
     @GetMapping("/testCase007")
-    public String testCase007() {
-        return aliraNavigateTabGamesService.testCase007NavigateTabGamesThemesTagsTest();
+    public ResponseEntity<String> testCase007() {
+        String result = aliraNavigateTabGamesService.testCase007NavigateTabGamesThemesTagsTest();
+        return result.startsWith("OK") || result.startsWith("SKIPPED")
+                ? ResponseEntity.ok(result)
+                : ResponseEntity.internalServerError().body(result);
     }
 
     @Operation(
@@ -78,9 +99,13 @@ public class AliraNavigateTabGamesController {
         description = "Logs in, navigates to Games → Exchange Profile and verifies the URL resolves to exchangeProfile.aml. " +
                       "A screenshot is saved to screenshots/alira/ on completion."
     )
-    @ApiResponse(responseCode = "200", description = "✅ with loaded URL on success, ❌ with expected vs actual URL on failure", content = @Content(mediaType = "text/plain"))
+    @ApiResponse(responseCode = "200", description = "OK — with loaded URL on success", content = @Content(mediaType = "text/plain"))
+    @ApiResponse(responseCode = "500", description = "KO — with expected vs actual URL, or error details on failure", content = @Content(mediaType = "text/plain"))
     @GetMapping("/testCase008")
-    public String testCase008() {
-        return aliraNavigateTabGamesService.testCase008NavigateTabGamesExchangeProfileTest();
+    public ResponseEntity<String> testCase008() {
+        String result = aliraNavigateTabGamesService.testCase008NavigateTabGamesExchangeProfileTest();
+        return result.startsWith("OK") || result.startsWith("SKIPPED")
+                ? ResponseEntity.ok(result)
+                : ResponseEntity.internalServerError().body(result);
     }
 }

@@ -6,6 +6,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.gig.myplayrightapp.service.GoldenParkPtTestService;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -32,10 +33,14 @@ public class GoldenParkPtTestController {
                       "⚠️ This test creates a real player account in the dev environment. " +
                       "A screenshot is saved to screenshots/gp/ on completion."
     )
-    @ApiResponse(responseCode = "200", description = "✅ on successful registration, ❌ if errors were found or page did not advance", content = @Content(mediaType = "text/plain"))
+    @ApiResponse(responseCode = "200", description = "OK — on successful registration", content = @Content(mediaType = "text/plain"))
+    @ApiResponse(responseCode = "500", description = "KO — if errors were found or page did not advance", content = @Content(mediaType = "text/plain"))
     @GetMapping("/register")
-    public String runManualRegistration() {
-        return service.runManualRegistrationTest();
+    public ResponseEntity<String> runManualRegistration() {
+        String result = service.runManualRegistrationTest();
+        return result.startsWith("OK") || result.startsWith("SKIPPED")
+                ? ResponseEntity.ok(result)
+                : ResponseEntity.internalServerError().body(result);
     }
 
     @Operation(
@@ -45,9 +50,13 @@ public class GoldenParkPtTestController {
                       "Skipped automatically if no existing player is found in the database. " +
                       "A screenshot is saved to screenshots/gp/ on completion."
     )
-    @ApiResponse(responseCode = "200", description = "✅ if duplicate warning shown, ❌ if warning did not appear, ⚠️ if skipped (no existing player)", content = @Content(mediaType = "text/plain"))
+    @ApiResponse(responseCode = "200", description = "OK — if duplicate warning shown, SKIPPED — if no existing player found", content = @Content(mediaType = "text/plain"))
+    @ApiResponse(responseCode = "500", description = "KO — if warning did not appear", content = @Content(mediaType = "text/plain"))
     @GetMapping("/register-duplicate")
-    public String runDuplicateNif() {
-        return service.runDuplicateNifTest();
+    public ResponseEntity<String> runDuplicateNif() {
+        String result = service.runDuplicateNifTest();
+        return result.startsWith("OK") || result.startsWith("SKIPPED")
+                ? ResponseEntity.ok(result)
+                : ResponseEntity.internalServerError().body(result);
     }
 }

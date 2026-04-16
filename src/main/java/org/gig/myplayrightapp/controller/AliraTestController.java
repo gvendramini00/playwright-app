@@ -6,6 +6,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.gig.myplayrightapp.service.AliraTestService;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -30,10 +31,14 @@ public class AliraTestController {
         description = "Opens the Alira Back Office login page, fills in credentials and verifies the Dashboard loads. " +
                       "A screenshot is saved to screenshots/alira/ on completion."
     )
-    @ApiResponse(responseCode = "200", description = "✅ on successful login, ❌ with error details on failure", content = @Content(mediaType = "text/plain"))
+    @ApiResponse(responseCode = "200", description = "OK — login succeeded", content = @Content(mediaType = "text/plain"))
+    @ApiResponse(responseCode = "500", description = "KO — with error details on failure", content = @Content(mediaType = "text/plain"))
     @GetMapping("/testCase001")
-    public String testCase001() {
-        return aliraTestService.testCase001LoginTest();
+    public ResponseEntity<String> testCase001() {
+        String result = aliraTestService.testCase001LoginTest();
+        return result.startsWith("OK") || result.startsWith("SKIPPED")
+                ? ResponseEntity.ok(result)
+                : ResponseEntity.internalServerError().body(result);
     }
 
     @Operation(
@@ -41,9 +46,13 @@ public class AliraTestController {
         description = "Logs in and searches for the configured test player, then verifies the Player Profile page loads correctly. " +
                       "A screenshot is saved to screenshots/alira/ on completion."
     )
-    @ApiResponse(responseCode = "200", description = "✅ on successful navigation, ❌ with error details on failure", content = @Content(mediaType = "text/plain"))
+    @ApiResponse(responseCode = "200", description = "OK — Player Profile loaded", content = @Content(mediaType = "text/plain"))
+    @ApiResponse(responseCode = "500", description = "KO — with error details on failure", content = @Content(mediaType = "text/plain"))
     @GetMapping("/testCase002")
-    public String testCase002() {
-        return aliraTestService.testCase002NavigatePlayerProfile();
+    public ResponseEntity<String> testCase002() {
+        String result = aliraTestService.testCase002NavigatePlayerProfile();
+        return result.startsWith("OK") || result.startsWith("SKIPPED")
+                ? ResponseEntity.ok(result)
+                : ResponseEntity.internalServerError().body(result);
     }
 }

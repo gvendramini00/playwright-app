@@ -45,11 +45,11 @@ public class AliraTestServiceImpl implements AliraTestService {
                 page.waitForLoadState(LoadState.NETWORKIDLE);
                 screenshotUtil.takeScreenshot(page, SCREENSHOT_ALIRA_PATH, "testCase001");
                 log.info("Login successful for user: {}", aliraUsername);
-                return String.format("✅ User %s logged in successfully.", aliraUsername);
+                return String.format("OK — User %s logged in successfully.", aliraUsername);
             });
         } catch (Exception e) {
             log.error("Login failed", e);
-            return "❌ Error at login: " + e.getMessage();
+            return "KO — Error at login: " + e.getMessage();
         }
     }
 
@@ -65,11 +65,11 @@ public class AliraTestServiceImpl implements AliraTestService {
                 page.waitForLoadState(LoadState.NETWORKIDLE);
                 screenshotUtil.takeScreenshot(page, SCREENSHOT_ALIRA_PATH, "testCase002");
                 log.info("Player profile successful for player: {}", ALIRA_PLAYER.getValue());
-                return "✅ Player Profile loaded correctly!";
+                return "OK — Player Profile loaded correctly!";
             });
         } catch (Exception e) {
             log.error("Player Profile", e);
-            return "❌ Error at redirection to Player Profile: " + e.getMessage();
+            return "KO — Error at redirection to Player Profile: " + e.getMessage();
         }
     }
 }

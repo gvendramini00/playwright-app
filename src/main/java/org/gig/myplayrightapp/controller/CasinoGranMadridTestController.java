@@ -6,6 +6,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.gig.myplayrightapp.service.CasinoGranMadridTestService;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -30,10 +31,14 @@ public class CasinoGranMadridTestController {
         description = "Opens the Casino Gran Madrid pre-production homepage and returns the page title. " +
                       "A screenshot is saved to screenshots/cgm/ on completion."
     )
-    @ApiResponse(responseCode = "200", description = "✅ with page title on success, ❌ with error details on failure", content = @Content(mediaType = "text/plain"))
+    @ApiResponse(responseCode = "200", description = "OK — with page title on success", content = @Content(mediaType = "text/plain"))
+    @ApiResponse(responseCode = "500", description = "KO — with error details on failure", content = @Content(mediaType = "text/plain"))
     @GetMapping("/testCase001")
-    public String testCase001_GoToPreProdWebsite() {
-        return casinoGranMadridTestService.testCase001RunPreProdAccessTest();
+    public ResponseEntity<String> testCase001_GoToPreProdWebsite() {
+        String result = casinoGranMadridTestService.testCase001RunPreProdAccessTest();
+        return result.startsWith("OK") || result.startsWith("SKIPPED")
+                ? ResponseEntity.ok(result)
+                : ResponseEntity.internalServerError().body(result);
     }
 
     @Operation(
@@ -42,10 +47,14 @@ public class CasinoGranMadridTestController {
                       "HAR traffic is recorded to browser/output.har. " +
                       "A screenshot is saved to screenshots/cgm/ on completion."
     )
-    @ApiResponse(responseCode = "200", description = "✅ if heading is visible, ❌ if modal did not appear", content = @Content(mediaType = "text/plain"))
+    @ApiResponse(responseCode = "200", description = "OK — if heading is visible", content = @Content(mediaType = "text/plain"))
+    @ApiResponse(responseCode = "500", description = "KO — if modal did not appear", content = @Content(mediaType = "text/plain"))
     @GetMapping("/testCase002")
-    public String testCase002_registerButton() {
-        return casinoGranMadridTestService.testCase002RunRegisterButtonTest();
+    public ResponseEntity<String> testCase002_registerButton() {
+        String result = casinoGranMadridTestService.testCase002RunRegisterButtonTest();
+        return result.startsWith("OK") || result.startsWith("SKIPPED")
+                ? ResponseEntity.ok(result)
+                : ResponseEntity.internalServerError().body(result);
     }
 
     @Operation(
@@ -54,10 +63,14 @@ public class CasinoGranMadridTestController {
                       "Uses fake camera/media-stream flags so no real camera is required. " +
                       "A screenshot is saved to screenshots/cgm/ on completion."
     )
-    @ApiResponse(responseCode = "200", description = "✅ if camera capture prompt is visible, ❌ with error details on failure", content = @Content(mediaType = "text/plain"))
+    @ApiResponse(responseCode = "200", description = "OK — if camera capture prompt is visible", content = @Content(mediaType = "text/plain"))
+    @ApiResponse(responseCode = "500", description = "KO — with error details on failure", content = @Content(mediaType = "text/plain"))
     @GetMapping("/testCase003")
-    public String testCase003_fastRegisterVeridas() {
-        return casinoGranMadridTestService.testCase003RunFastRegisterVeridasTest();
+    public ResponseEntity<String> testCase003_fastRegisterVeridas() {
+        String result = casinoGranMadridTestService.testCase003RunFastRegisterVeridasTest();
+        return result.startsWith("OK") || result.startsWith("SKIPPED")
+                ? ResponseEntity.ok(result)
+                : ResponseEntity.internalServerError().body(result);
     }
 
     @Operation(
@@ -67,10 +80,14 @@ public class CasinoGranMadridTestController {
                       "⚠️ This test creates a real player account in the pre-production environment. " +
                       "A screenshot is saved to screenshots/cgm/ on completion."
     )
-    @ApiResponse(responseCode = "200", description = "✅ on successful registration, ❌ with error details or screenshot path on failure", content = @Content(mediaType = "text/plain"))
+    @ApiResponse(responseCode = "200", description = "OK — on successful registration", content = @Content(mediaType = "text/plain"))
+    @ApiResponse(responseCode = "500", description = "KO — with error details or screenshot path on failure", content = @Content(mediaType = "text/plain"))
     @GetMapping("/testCase004")
-    public String testCase004_manualRegister() {
-        return casinoGranMadridTestService.testCase004RunManualRegisterTest();
+    public ResponseEntity<String> testCase004_manualRegister() {
+        String result = casinoGranMadridTestService.testCase004RunManualRegisterTest();
+        return result.startsWith("OK") || result.startsWith("SKIPPED")
+                ? ResponseEntity.ok(result)
+                : ResponseEntity.internalServerError().body(result);
     }
 
     @Operation(
@@ -79,10 +96,14 @@ public class CasinoGranMadridTestController {
                       "Verifies the page does not advance, confirming client-side validation is active. " +
                       "A screenshot is saved to screenshots/cgm/ on completion."
     )
-    @ApiResponse(responseCode = "200", description = "✅ if page stayed on step 1, ❌ if page advanced despite missing input", content = @Content(mediaType = "text/plain"))
+    @ApiResponse(responseCode = "200", description = "OK — if page stayed on step 1", content = @Content(mediaType = "text/plain"))
+    @ApiResponse(responseCode = "500", description = "KO — if page advanced despite missing input", content = @Content(mediaType = "text/plain"))
     @GetMapping("/testCase005")
-    public String testCase005_manualRegisterWithInvalidData() {
-        return casinoGranMadridTestService.testCase005RunInvalidNameRegistrationTest();
+    public ResponseEntity<String> testCase005_manualRegisterWithInvalidData() {
+        String result = casinoGranMadridTestService.testCase005RunInvalidNameRegistrationTest();
+        return result.startsWith("OK") || result.startsWith("SKIPPED")
+                ? ResponseEntity.ok(result)
+                : ResponseEntity.internalServerError().body(result);
     }
 
     @Operation(
@@ -92,9 +113,13 @@ public class CasinoGranMadridTestController {
                       "Skipped automatically if no existing player is found in the database. " +
                       "A screenshot is saved to screenshots/cgm/ on completion."
     )
-    @ApiResponse(responseCode = "200", description = "✅ if duplicate warning shown, ❌ if warning did not appear, ⚠️ if skipped (no existing player)", content = @Content(mediaType = "text/plain"))
+    @ApiResponse(responseCode = "200", description = "OK — if duplicate warning shown, SKIPPED — if no existing player found", content = @Content(mediaType = "text/plain"))
+    @ApiResponse(responseCode = "500", description = "KO — if warning did not appear", content = @Content(mediaType = "text/plain"))
     @GetMapping("/testCase006")
-    public String testCase006_manualRegisterWithDuplicatedData() {
-        return casinoGranMadridTestService.testCase006RunDuplicatedRegisterTest();
+    public ResponseEntity<String> testCase006_manualRegisterWithDuplicatedData() {
+        String result = casinoGranMadridTestService.testCase006RunDuplicatedRegisterTest();
+        return result.startsWith("OK") || result.startsWith("SKIPPED")
+                ? ResponseEntity.ok(result)
+                : ResponseEntity.internalServerError().body(result);
     }
 }

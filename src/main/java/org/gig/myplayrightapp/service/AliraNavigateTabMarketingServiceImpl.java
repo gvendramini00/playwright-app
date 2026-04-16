@@ -38,7 +38,7 @@ public class AliraNavigateTabMarketingServiceImpl implements AliraNavigateTabMar
                 screenshotUtil.takeScreenshot(page, SCREENSHOT_ALIRA_PATH, "testCase012");
                 if (rowCount > 0) {
                     log.info(LOG_TABLE_SUCCESS.getValue(), rowCount);
-                    return "✅ Dashboard loaded with table containing " + rowCount + " rows.";
+                    return "OK — Dashboard loaded with table containing " + rowCount + " rows.";
                 }
                 log.warn("Dashboard table has no rows");
                 return ERR_TABLE_EMPTY.getValue();
@@ -63,7 +63,7 @@ public class AliraNavigateTabMarketingServiceImpl implements AliraNavigateTabMar
                 screenshotUtil.takeScreenshot(page, SCREENSHOT_ALIRA_PATH, "testCase013");
                 if (rowCount > 0) {
                     log.info(LOG_TABLE_SUCCESS.getValue(), rowCount);
-                    return "✅ Marketing → Bonus → Deposit Promotions loaded with table containing " + rowCount + " rows.";
+                    return "OK — Marketing → Bonus → Deposit Promotions loaded with table containing " + rowCount + " rows.";
                 }
                 log.warn("Deposit Promotions table has no rows");
                 return ERR_TABLE_EMPTY.getValue();
@@ -90,10 +90,10 @@ public class AliraNavigateTabMarketingServiceImpl implements AliraNavigateTabMar
                 screenshotUtil.takeScreenshot(page, SCREENSHOT_ALIRA_PATH, "testCase014");
                 if (modalVisible) {
                     log.info("New Deposit Promotion modal is visible");
-                    return "✅ 'New Deposit Promotion' modal opened successfully.";
+                    return "OK — 'New Deposit Promotion' modal opened successfully.";
                 }
                 log.warn("Modal did not appear after clicking New");
-                return "❌ Modal did not appear after clicking New.";
+                return "KO — Modal did not appear after clicking New.";
             });
         } catch (Exception e) {
             log.error(LOG_NAV_ERROR.getValue(), e);
@@ -170,8 +170,8 @@ public class AliraNavigateTabMarketingServiceImpl implements AliraNavigateTabMar
                 page.locator("#promo_selection_div button").click();
                 page.getByRole(AriaRole.LISTBOX)
                         .waitFor(new Locator.WaitForOptions().setTimeout(10000));
-                page.getByRole(AriaRole.LISTBOX)
-                        .getByRole(AriaRole.OPTION, new Locator.GetByRoleOptions().setName("Any"))
+                page.waitForTimeout(500);
+                page.getByRole(AriaRole.OPTION, new Page.GetByRoleOptions().setName("Any"))
                         .click();
                 // Wait for the dropdown to close before continuing
                 page.getByRole(AriaRole.LISTBOX)
@@ -202,11 +202,11 @@ public class AliraNavigateTabMarketingServiceImpl implements AliraNavigateTabMar
 
                 if (hasError) {
                     log.warn("❌ Deposit promotion '{}' save returned errors. Screenshot: {}", promotionName, screenshotPath);
-                    return "❌ Deposit promotion save failed with visible errors. Check screenshot: " + screenshotPath;
+                    return "KO — Deposit promotion save failed with visible errors. Check screenshot: " + screenshotPath;
                 }
 
-                log.info("✅ Deposit promotion '{}' created successfully. Screenshot: {}", promotionName, screenshotPath);
-                return "✅ Deposit promotion '" + promotionName + "' created successfully.";
+                log.info("Deposit promotion '{}' created successfully. Screenshot: {}", promotionName, screenshotPath);
+                return "OK — Deposit promotion '" + promotionName + "' created successfully.";
             });
         } catch (Exception e) {
             log.error("❌ Error in testCase015", e);
@@ -266,11 +266,11 @@ public class AliraNavigateTabMarketingServiceImpl implements AliraNavigateTabMar
                 String screenshotPath = screenshotUtil.takeScreenshot(page, SCREENSHOT_ALIRA_PATH, "testCase016");
 
                 if (nameVisible) {
-                    log.info("✅ Deposit promotion renamed '{}' → '{}'. Screenshot: {}", originalName, updatedName, screenshotPath);
-                    return "✅ Deposit promotion updated: '" + originalName + "' → '" + updatedName + "'.";
+                    log.info("Deposit promotion renamed '{}' → '{}'. Screenshot: {}", originalName, updatedName, screenshotPath);
+                    return "OK — Deposit promotion updated: '" + originalName + "' → '" + updatedName + "'.";
                 } else {
-                    log.warn("❌ Updated name '{}' not found in table after save. Screenshot: {}", updatedName, screenshotPath);
-                    return "❌ Save appeared to succeed but updated name '" + updatedName + "' not found in table. Check screenshot: " + screenshotPath;
+                    log.warn("Updated name '{}' not found in table after save. Screenshot: {}", updatedName, screenshotPath);
+                    return "KO — Save appeared to succeed but updated name '" + updatedName + "' not found in table. Check screenshot: " + screenshotPath;
                 }
             });
         } catch (Exception e) {
@@ -324,11 +324,11 @@ public class AliraNavigateTabMarketingServiceImpl implements AliraNavigateTabMar
                 String screenshotPath = screenshotUtil.takeScreenshot(page, SCREENSHOT_ALIRA_PATH, "testCase017");
 
                 if (!stillExists) {
-                    log.info("✅ Deposit promotion ID '{}' deleted successfully. Screenshot: {}", deletedId, screenshotPath);
-                    return "✅ Deposit promotion ID '" + deletedId + "' deleted successfully.";
+                    log.info("Deposit promotion ID '{}' deleted successfully. Screenshot: {}", deletedId, screenshotPath);
+                    return "OK — Deposit promotion ID '" + deletedId + "' deleted successfully.";
                 } else {
-                    log.warn("❌ Deposit promotion ID '{}' still visible after deletion. Screenshot: {}", deletedId, screenshotPath);
-                    return "❌ Deletion failed: ID '" + deletedId + "' still present in table. Check screenshot: " + screenshotPath;
+                    log.warn("Deposit promotion ID '{}' still visible after deletion. Screenshot: {}", deletedId, screenshotPath);
+                    return "KO — Deletion failed: ID '" + deletedId + "' still present in table. Check screenshot: " + screenshotPath;
                 }
             });
         } catch (Exception e) {

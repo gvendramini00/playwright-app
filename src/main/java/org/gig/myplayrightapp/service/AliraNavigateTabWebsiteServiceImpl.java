@@ -34,7 +34,7 @@ public class AliraNavigateTabWebsiteServiceImpl implements AliraNavigateTabWebsi
                 if (page.url().contains(targetUrl) || targetUrl.contains(page.url())) {
                     log.info("Success - Navigation to tab WEBSITE -> CMS");
                     screenshotUtil.takeScreenshot(page, SCREENSHOT_ALIRA_PATH, "testCase009");
-                    return "✅ CMS tab loaded correctly! URL: " + page.url();
+                    return "OK — CMS tab loaded correctly! URL: " + page.url();
                 }
                 return ERR_NAV_FAILED.getValue() + targetUrl + ERR_NAV_BUT_GOT.getValue() + page.url();
             });
@@ -58,7 +58,7 @@ public class AliraNavigateTabWebsiteServiceImpl implements AliraNavigateTabWebsi
                 if (page.url().contains(targetUrl) || targetUrl.contains(page.url())) {
                     log.info("Success - Navigation to tab WEBSITE -> Configuration -> CMS Access");
                     screenshotUtil.takeScreenshot(page, SCREENSHOT_ALIRA_PATH, "testCase010");
-                    return "✅ CMS Access tab loaded correctly! URL: " + page.url();
+                    return "OK — CMS Access tab loaded correctly! URL: " + page.url();
                 }
                 return ERR_NAV_FAILED.getValue() + targetUrl + ERR_NAV_BUT_GOT.getValue() + page.url();
             });
@@ -82,7 +82,7 @@ public class AliraNavigateTabWebsiteServiceImpl implements AliraNavigateTabWebsi
                 if (page.url().contains(targetUrl) || targetUrl.contains(page.url())) {
                     log.info("Success - Navigation to tab WEBSITE -> Configuration -> Constants");
                     screenshotUtil.takeScreenshot(page, SCREENSHOT_ALIRA_PATH, "testCase011");
-                    return "✅ Constants tab loaded correctly! URL: " + page.url();
+                    return "OK — Constants tab loaded correctly! URL: " + page.url();
                 }
                 return ERR_NAV_FAILED.getValue() + targetUrl + ERR_NAV_BUT_GOT.getValue() + page.url();
             });

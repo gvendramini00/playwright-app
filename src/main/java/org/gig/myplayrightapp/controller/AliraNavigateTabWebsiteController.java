@@ -6,6 +6,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.gig.myplayrightapp.service.AliraNavigateTabWebsiteService;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -23,10 +24,14 @@ public class AliraNavigateTabWebsiteController {
         description = "Logs in, navigates to Website → CMS and verifies the URL resolves to cms.aml. " +
                       "A screenshot is saved to screenshots/alira/ on completion."
     )
-    @ApiResponse(responseCode = "200", description = "✅ with loaded URL on success, ❌ with expected vs actual URL on failure", content = @Content(mediaType = "text/plain"))
+    @ApiResponse(responseCode = "200", description = "OK — with loaded URL on success", content = @Content(mediaType = "text/plain"))
+    @ApiResponse(responseCode = "500", description = "KO — with expected vs actual URL, or error details on failure", content = @Content(mediaType = "text/plain"))
     @GetMapping("/testCase009")
-    public String testCase009() {
-        return aliraNavigateTabWebsiteService.testCase009NavigateTabWebsiteCMSTest();
+    public ResponseEntity<String> testCase009() {
+        String result = aliraNavigateTabWebsiteService.testCase009NavigateTabWebsiteCMSTest();
+        return result.startsWith("OK") || result.startsWith("SKIPPED")
+                ? ResponseEntity.ok(result)
+                : ResponseEntity.internalServerError().body(result);
     }
 
     @Operation(
@@ -34,10 +39,14 @@ public class AliraNavigateTabWebsiteController {
         description = "Logs in, navigates to Website → Configuration → CMS Access and verifies the URL resolves to CMSAccess.aml. " +
                       "A screenshot is saved to screenshots/alira/ on completion."
     )
-    @ApiResponse(responseCode = "200", description = "✅ with loaded URL on success, ❌ with expected vs actual URL on failure", content = @Content(mediaType = "text/plain"))
+    @ApiResponse(responseCode = "200", description = "OK — with loaded URL on success", content = @Content(mediaType = "text/plain"))
+    @ApiResponse(responseCode = "500", description = "KO — with expected vs actual URL, or error details on failure", content = @Content(mediaType = "text/plain"))
     @GetMapping("/testCase010")
-    public String testCase010() {
-        return aliraNavigateTabWebsiteService.testCase010NavigateTabWebsiteConfigurationCMSAccessTest();
+    public ResponseEntity<String> testCase010() {
+        String result = aliraNavigateTabWebsiteService.testCase010NavigateTabWebsiteConfigurationCMSAccessTest();
+        return result.startsWith("OK") || result.startsWith("SKIPPED")
+                ? ResponseEntity.ok(result)
+                : ResponseEntity.internalServerError().body(result);
     }
 
     @Operation(
@@ -45,9 +54,13 @@ public class AliraNavigateTabWebsiteController {
         description = "Logs in, navigates to Website → Configuration → Constants and verifies the URL resolves to CMSConstants.aml. " +
                       "A screenshot is saved to screenshots/alira/ on completion."
     )
-    @ApiResponse(responseCode = "200", description = "✅ with loaded URL on success, ❌ with expected vs actual URL on failure", content = @Content(mediaType = "text/plain"))
+    @ApiResponse(responseCode = "200", description = "OK — with loaded URL on success", content = @Content(mediaType = "text/plain"))
+    @ApiResponse(responseCode = "500", description = "KO — with expected vs actual URL, or error details on failure", content = @Content(mediaType = "text/plain"))
     @GetMapping("/testCase011")
-    public String testCase011() {
-        return aliraNavigateTabWebsiteService.testCase011NavigateTabWebsiteConfigurationConstantsTest();
+    public ResponseEntity<String> testCase011() {
+        String result = aliraNavigateTabWebsiteService.testCase011NavigateTabWebsiteConfigurationConstantsTest();
+        return result.startsWith("OK") || result.startsWith("SKIPPED")
+                ? ResponseEntity.ok(result)
+                : ResponseEntity.internalServerError().body(result);
     }
 }

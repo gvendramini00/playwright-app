@@ -35,15 +35,15 @@ public class CasinoGranMadridTestService {
                 page.navigate("https://casinogranmadridonline.pre.tecnalis.com/");
                 String title = page.title();
                 screenshotUtil.takeScreenshot(page, SCREENSHOT_CGM_PATH, "testCase001");
-                return "✅ Site loaded. Title: " + title;
+                return "OK — Site loaded. Title: " + title;
             });
         } catch (Exception e) {
-            return "❌ Error loading site: " + e.getMessage();
+            return "KO — Error loading site: " + e.getMessage();
         }
     }
 
     public String testCase002RunRegisterButtonTest() {
-        log.info("✅ TestCase002 executed: Open Register modal and validate registration heading");
+        log.info("TestCase002 executed: Open Register modal and validate registration heading");
         try {
             return playwrightUtil.withPage(
                 new BrowserType.LaunchOptions(),
@@ -60,17 +60,17 @@ public class CasinoGranMadridTestService {
                     page.waitForTimeout(1000);
                     screenshotUtil.takeScreenshot(page, SCREENSHOT_CGM_PATH, "testCase002");
                     return heading.isVisible()
-                            ? "✅ Registration modal loaded successfully: heading found"
-                            : "❌ Registration modal did not appear";
+                            ? "OK — Registration modal loaded successfully: heading found"
+                            : "KO — Registration modal did not appear";
                 });
         } catch (Exception e) {
-            log.error("❌ Error in TestCase002", e);
-            return "❌ TestCase002 failed: " + e.getMessage();
+            log.error("Error in TestCase002", e);
+            return "KO — TestCase002 failed: " + e.getMessage();
         }
     }
 
     public String testCase003RunFastRegisterVeridasTest() {
-        log.info("✅ TestCase003 executed: Fast Register via Veridas — stop at camera activation");
+        log.info("TestCase003 executed: Fast Register via Veridas — stop at camera activation");
         try {
             return playwrightUtil.withPage(
                 new BrowserType.LaunchOptions()
@@ -99,18 +99,18 @@ public class CasinoGranMadridTestService {
                     log.info("✅ Camera and document capture prompt visible");
                     page.waitForTimeout(1500);
                     screenshotUtil.takeScreenshot(page, SCREENSHOT_CGM_PATH, "testCase003");
-                    return "✅ Veridas Fast Register opened and camera capture screen visible.";
+                    return "OK — Veridas Fast Register opened and camera capture screen visible.";
                 });
         } catch (Exception e) {
-            log.error("❌ Error in TestCase003", e);
-            return "❌ TestCase003 failed: " + e.getMessage();
+            log.error("Error in TestCase003", e);
+            return "KO — TestCase003 failed: " + e.getMessage();
         }
     }
 
     public String testCase004RunManualRegisterTest() {
-        log.info("✅ TestCase004 executed: Manual Registration (non-Veridas)");
+        log.info("TestCase004 executed: Manual Registration (non-Veridas)");
         InsertPlayerDTO dto = RegistrationDataUtils.generateUniqueInsertPlayerDTO(playerService);
-        log.info("✅ Unique player to be inserted: {}", dto.email());
+        log.info("Unique player to be inserted: {}", dto.email());
         try {
             return playwrightUtil.withPage(page -> {
                 page.navigate("https://casinogranmadridonline.pre.tecnalis.com/");
@@ -159,29 +159,29 @@ public class CasinoGranMadridTestService {
                         if (errorLocator.nth(i).isVisible()) {
                             String errorText = errorLocator.nth(i).innerText();
                             screenshotUtil.takeScreenshot(page, SCREENSHOT_CGM_PATH, "testCase004_failed");
-                            throw new RuntimeException("❌ Registration failed: " + errorText);
+                            throw new RuntimeException("Registration failed: " + errorText);
                         }
                     }
                 }
 
                 if (page.url().equals(beforeSubmitUrl)) {
                     screenshotUtil.takeScreenshot(page, SCREENSHOT_CGM_PATH, "testCase004_failed_no_redirect");
-                    throw new RuntimeException("❌ Registration failed: Page did not proceed after submitting.");
+                    throw new RuntimeException("Registration failed: Page did not proceed after submitting.");
                 }
 
                 String screenshotPath = screenshotUtil.takeScreenshot(page, SCREENSHOT_CGM_PATH, "testCase004");
                 RegistrationDataUtils.logGeneratedUser(dto.email(), dto.nationalId(), dto.alias(), screenshotPath);
-                log.info("✅ Manual registration succeeded for user: {}", dto.alias());
-                return "✅ Manual registration completed successfully.";
+                log.info("Manual registration succeeded for user: {}", dto.alias());
+                return "OK — Manual registration completed successfully.";
             });
         } catch (Exception e) {
-            log.error("❌ Error in TestCase004", e);
-            return "❌ TestCase004 failed: " + e.getMessage();
+            log.error("Error in TestCase004", e);
+            return "KO — TestCase004 failed: " + e.getMessage();
         }
     }
 
     public String testCase005RunInvalidNameRegistrationTest() {
-        log.info("✅ TestCase005 executed: Registration with missing name");
+        log.info("TestCase005 executed: Registration with missing name");
         try {
             return playwrightUtil.withPage(page -> {
                 page.navigate("https://casinogranmadridonline.pre.tecnalis.com/");
@@ -194,23 +194,23 @@ public class CasinoGranMadridTestService {
                 String afterClickURL = page.url();
                 screenshotUtil.takeScreenshot(page, SCREENSHOT_CGM_PATH, "testCase005");
                 if (currentURL.equals(afterClickURL)) {
-                    log.info("✅ Page did not advance. Validation likely triggered.");
-                    return "✅ Validation succeeded: Page remained on step 1 (missing name)";
+                    log.info("Page did not advance. Validation likely triggered.");
+                    return "OK — Validation succeeded: Page remained on step 1 (missing name)";
                 }
-                log.warn("❌ Page advanced despite missing name!");
-                return "❌ Validation failed: Page moved to next step with invalid input";
+                log.warn("Page advanced despite missing name!");
+                return "KO — Validation failed: Page moved to next step with invalid input";
             });
         } catch (Exception e) {
-            log.error("❌ Error in TestCase005", e);
-            return "❌ TestCase005 failed: " + e.getMessage();
+            log.error("Error in TestCase005", e);
+            return "KO — TestCase005 failed: " + e.getMessage();
         }
     }
 
     public String testCase006RunDuplicatedRegisterTest() {
-        log.info("🧪 TestCase006: Manual Registration with duplicated user data");
+        log.info("TestCase006: Manual Registration with duplicated user data");
         Optional<InsertPlayerDTO> maybeExistingPlayer = playerService.findAnyExistingPlayer();
         if (maybeExistingPlayer.isEmpty()) {
-            return "⚠️ TestCase006 skipped: No existing player found to duplicate.";
+            return "SKIPPED — TestCase006: No existing player found to duplicate.";
         }
         InsertPlayerDTO dto = maybeExistingPlayer.get();
         try {
@@ -237,19 +237,19 @@ public class CasinoGranMadridTestService {
                         String text = duplicateModal.nth(i).innerText().trim();
                         if (text.contains("DNI/NIE ya está en uso")) {
                             String screenshotPath = screenshotUtil.takeScreenshot(page, SCREENSHOT_CGM_PATH, "testCase006_duplicate_dni");
-                            log.info("✅ Duplicate DNI/NIE detected for user '{}' (DNI: {}). Screenshot saved: {}", dto.alias(), dto.nationalId(), screenshotPath);
-                            return "✅ TestCase006 passed: Duplicate warning shown.";
+                            log.info("Duplicate DNI/NIE detected for user '{}' (DNI: {}). Screenshot saved: {}", dto.alias(), dto.nationalId(), screenshotPath);
+                            return "OK — TestCase006 passed: Duplicate warning shown.";
                         }
                     }
                 }
 
                 String failPath = screenshotUtil.takeScreenshot(page, SCREENSHOT_CGM_PATH, "testCase006_no_modal");
-                log.warn("❌ Expected modal did not appear. Screenshot: {}", failPath);
-                return "❌ TestCase006 failed: Duplicate check did not trigger expected modal.";
+                log.warn("Expected modal did not appear. Screenshot: {}", failPath);
+                return "KO — TestCase006 failed: Duplicate check did not trigger expected modal.";
             });
         } catch (Exception e) {
-            log.error("❌ Error in TestCase006", e);
-            return "❌ TestCase006 failed: " + e.getMessage();
+            log.error("Error in TestCase006", e);
+            return "KO — TestCase006 failed: " + e.getMessage();
         }
     }
 }

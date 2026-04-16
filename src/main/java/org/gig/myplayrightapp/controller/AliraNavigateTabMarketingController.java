@@ -6,6 +6,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.gig.myplayrightapp.service.AliraNavigateTabMarketingService;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -23,10 +24,14 @@ public class AliraNavigateTabMarketingController {
         description = "Logs in, navigates to the Dashboard and verifies that the main table contains at least one data row. " +
                       "A screenshot is saved to screenshots/alira/ on completion."
     )
-    @ApiResponse(responseCode = "200", description = "✅ with row count on success, ❌ if table is empty", content = @Content(mediaType = "text/plain"))
+    @ApiResponse(responseCode = "200", description = "OK — with row count on success", content = @Content(mediaType = "text/plain"))
+    @ApiResponse(responseCode = "500", description = "KO — if table is empty or navigation failed", content = @Content(mediaType = "text/plain"))
     @GetMapping("/testCase012")
-    public String testCase012() {
-        return aliraNavigateTabMarketingService.testCase012NavigateDashboardTest();
+    public ResponseEntity<String> testCase012() {
+        String result = aliraNavigateTabMarketingService.testCase012NavigateDashboardTest();
+        return result.startsWith("OK") || result.startsWith("SKIPPED")
+                ? ResponseEntity.ok(result)
+                : ResponseEntity.internalServerError().body(result);
     }
 
     @Operation(
@@ -34,10 +39,14 @@ public class AliraNavigateTabMarketingController {
         description = "Logs in, navigates to Marketing → Bonus → Deposit Promotions and verifies that the table contains at least one row. " +
                       "A screenshot is saved to screenshots/alira/ on completion."
     )
-    @ApiResponse(responseCode = "200", description = "✅ with row count on success, ❌ if table is empty", content = @Content(mediaType = "text/plain"))
+    @ApiResponse(responseCode = "200", description = "OK — with row count on success", content = @Content(mediaType = "text/plain"))
+    @ApiResponse(responseCode = "500", description = "KO — if table is empty or navigation failed", content = @Content(mediaType = "text/plain"))
     @GetMapping("/testCase013")
-    public String testCase013() {
-        return aliraNavigateTabMarketingService.testCase013NavigateMarketingBonusDepositPromotionsTest();
+    public ResponseEntity<String> testCase013() {
+        String result = aliraNavigateTabMarketingService.testCase013NavigateMarketingBonusDepositPromotionsTest();
+        return result.startsWith("OK") || result.startsWith("SKIPPED")
+                ? ResponseEntity.ok(result)
+                : ResponseEntity.internalServerError().body(result);
     }
 
     @Operation(
@@ -45,10 +54,14 @@ public class AliraNavigateTabMarketingController {
         description = "Logs in, navigates to Deposit Promotions, clicks the New button and verifies the creation modal appears. " +
                       "A screenshot is saved to screenshots/alira/ on completion."
     )
-    @ApiResponse(responseCode = "200", description = "✅ if modal is visible, ❌ if modal did not appear", content = @Content(mediaType = "text/plain"))
+    @ApiResponse(responseCode = "200", description = "OK — if modal is visible", content = @Content(mediaType = "text/plain"))
+    @ApiResponse(responseCode = "500", description = "KO — if modal did not appear", content = @Content(mediaType = "text/plain"))
     @GetMapping("/testCase014")
-    public String testCase014() {
-        return aliraNavigateTabMarketingService.testCase014NavigateMarketingBonusDepositPromotionsNewModalTest();
+    public ResponseEntity<String> testCase014() {
+        String result = aliraNavigateTabMarketingService.testCase014NavigateMarketingBonusDepositPromotionsNewModalTest();
+        return result.startsWith("OK") || result.startsWith("SKIPPED")
+                ? ResponseEntity.ok(result)
+                : ResponseEntity.internalServerError().body(result);
     }
 
     @Operation(
@@ -58,10 +71,14 @@ public class AliraNavigateTabMarketingController {
                       "⚠️ This test writes data to the pre-production environment. " +
                       "A screenshot is saved to screenshots/alira/ on completion."
     )
-    @ApiResponse(responseCode = "200", description = "✅ with promotion name on success, ❌ with screenshot path if errors were found", content = @Content(mediaType = "text/plain"))
+    @ApiResponse(responseCode = "200", description = "OK — with promotion name on success", content = @Content(mediaType = "text/plain"))
+    @ApiResponse(responseCode = "500", description = "KO — with screenshot path if errors were found", content = @Content(mediaType = "text/plain"))
     @GetMapping("/testCase015")
-    public String testCase015() {
-        return aliraNavigateTabMarketingService.testCase015CreateDepositPromotionTest();
+    public ResponseEntity<String> testCase015() {
+        String result = aliraNavigateTabMarketingService.testCase015CreateDepositPromotionTest();
+        return result.startsWith("OK") || result.startsWith("SKIPPED")
+                ? ResponseEntity.ok(result)
+                : ResponseEntity.internalServerError().body(result);
     }
 
     @Operation(
@@ -71,10 +88,14 @@ public class AliraNavigateTabMarketingController {
                       "⚠️ This test modifies data in the pre-production environment. " +
                       "A screenshot is saved to screenshots/alira/ on completion."
     )
-    @ApiResponse(responseCode = "200", description = "✅ with old → new name on success, ❌ with screenshot path if update was not reflected", content = @Content(mediaType = "text/plain"))
+    @ApiResponse(responseCode = "200", description = "OK — with old → new name on success", content = @Content(mediaType = "text/plain"))
+    @ApiResponse(responseCode = "500", description = "KO — with screenshot path if update was not reflected", content = @Content(mediaType = "text/plain"))
     @GetMapping("/testCase016")
-    public String testCase016() {
-        return aliraNavigateTabMarketingService.testCase016EditDepositPromotionTest();
+    public ResponseEntity<String> testCase016() {
+        String result = aliraNavigateTabMarketingService.testCase016EditDepositPromotionTest();
+        return result.startsWith("OK") || result.startsWith("SKIPPED")
+                ? ResponseEntity.ok(result)
+                : ResponseEntity.internalServerError().body(result);
     }
 
     @Operation(
@@ -83,9 +104,13 @@ public class AliraNavigateTabMarketingController {
                       "⚠️ This test permanently deletes data from the pre-production environment. " +
                       "A screenshot is saved to screenshots/alira/ on completion."
     )
-    @ApiResponse(responseCode = "200", description = "✅ with deleted ID on success, ❌ with screenshot path if ID was still found after deletion", content = @Content(mediaType = "text/plain"))
+    @ApiResponse(responseCode = "200", description = "OK — with deleted ID on success", content = @Content(mediaType = "text/plain"))
+    @ApiResponse(responseCode = "500", description = "KO — with screenshot path if ID was still found after deletion", content = @Content(mediaType = "text/plain"))
     @GetMapping("/testCase017")
-    public String testCase017() {
-        return aliraNavigateTabMarketingService.testCase017DeleteDepositPromotionTest();
+    public ResponseEntity<String> testCase017() {
+        String result = aliraNavigateTabMarketingService.testCase017DeleteDepositPromotionTest();
+        return result.startsWith("OK") || result.startsWith("SKIPPED")
+                ? ResponseEntity.ok(result)
+                : ResponseEntity.internalServerError().body(result);
     }
 }

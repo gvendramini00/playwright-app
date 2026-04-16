@@ -34,7 +34,7 @@ public class AliraNavigateTabGamesServiceImpl implements AliraNavigateTabGamesSe
                 if (page.url().contains(targetUrl) || targetUrl.contains(page.url())) {
                     log.info("Success - Navigation to tab GAMES -> ROOMS");
                     screenshotUtil.takeScreenshot(page, SCREENSHOT_ALIRA_PATH, "testCase003");
-                    return "✅ Rooms tab loaded correctly! URL: " + page.url();
+                    return "OK — Rooms tab loaded correctly! URL: " + page.url();
                 }
                 return ERR_NAV_FAILED.getValue() + targetUrl + ERR_NAV_BUT_GOT.getValue() + page.url();
             });
@@ -57,7 +57,7 @@ public class AliraNavigateTabGamesServiceImpl implements AliraNavigateTabGamesSe
                 if (page.url().contains(targetUrl) || targetUrl.contains(page.url())) {
                     log.info("Success - Navigation to tab GAMES -> PROCESS ROOMS");
                     screenshotUtil.takeScreenshot(page, SCREENSHOT_ALIRA_PATH, "testCase004");
-                    return "✅ Rooms tab loaded correctly! URL: " + page.url();
+                    return "OK — Rooms tab loaded correctly! URL: " + page.url();
                 }
                 return ERR_NAV_FAILED.getValue() + targetUrl + ERR_NAV_BUT_GOT.getValue() + page.url();
             });
@@ -80,7 +80,7 @@ public class AliraNavigateTabGamesServiceImpl implements AliraNavigateTabGamesSe
                 if (page.url().contains(targetUrl) || targetUrl.contains(page.url())) {
                     log.info("Success - Navigation to tab GAMES -> LOBBY ROOMS");
                     screenshotUtil.takeScreenshot(page, SCREENSHOT_ALIRA_PATH, "testCase005");
-                    return "✅ Lobby tab loaded correctly! URL: " + page.url();
+                    return "OK — Lobby Rooms tab loaded correctly! URL: " + page.url();
                 }
                 return ERR_NAV_FAILED.getValue() + targetUrl + ERR_NAV_BUT_GOT.getValue() + page.url();
             });
@@ -103,7 +103,7 @@ public class AliraNavigateTabGamesServiceImpl implements AliraNavigateTabGamesSe
                 if (page.url().contains(targetUrl) || targetUrl.contains(page.url())) {
                     log.info("Success - Navigation to tab GAMES -> PROVIDERS");
                     screenshotUtil.takeScreenshot(page, SCREENSHOT_ALIRA_PATH, "testCase006");
-                    return "✅ Providers tab loaded correctly! URL: " + page.url();
+                    return "OK — Providers tab loaded correctly! URL: " + page.url();
                 }
                 return ERR_NAV_FAILED.getValue() + targetUrl + ERR_NAV_BUT_GOT.getValue() + page.url();
             });
@@ -126,7 +126,7 @@ public class AliraNavigateTabGamesServiceImpl implements AliraNavigateTabGamesSe
                 if (page.url().contains(targetUrl) || targetUrl.contains(page.url())) {
                     log.info("Success - Navigation to tab GAMES -> Themes & Tags");
                     screenshotUtil.takeScreenshot(page, SCREENSHOT_ALIRA_PATH, "testCase007");
-                    return "✅ Themes & Tags tab loaded correctly! URL: " + page.url();
+                    return "OK — Themes & Tags tab loaded correctly! URL: " + page.url();
                 }
                 return ERR_NAV_FAILED.getValue() + targetUrl + ERR_NAV_BUT_GOT.getValue() + page.url();
             });
@@ -149,7 +149,7 @@ public class AliraNavigateTabGamesServiceImpl implements AliraNavigateTabGamesSe
                 if (page.url().contains(targetUrl) || targetUrl.contains(page.url())) {
                     log.info("Success - Navigation to tab GAMES -> Exchange Profile");
                     screenshotUtil.takeScreenshot(page, SCREENSHOT_ALIRA_PATH, "testCase008");
-                    return "✅ Exchange Profile tab loaded correctly! URL: " + page.url();
+                    return "OK — Exchange Profile tab loaded correctly! URL: " + page.url();
                 }
                 return ERR_NAV_FAILED.getValue() + targetUrl + ERR_NAV_BUT_GOT.getValue() + page.url();
             });

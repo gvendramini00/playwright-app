@@ -48,11 +48,11 @@ public class AliraMassTestServiceImpl implements AliraMassTestService {
             try {
                 message = def.runner().get();
             } catch (Exception e) {
-                message = "❌ Unexpected error: " + e.getMessage();
+                message = "KO — Unexpected error: " + e.getMessage();
                 log.error("Error running {}", def.id(), e);
             }
             long duration = System.currentTimeMillis() - start;
-            boolean passed = message != null && message.startsWith("✅");
+            boolean passed = message != null && (message.startsWith("OK") || message.startsWith("SKIPPED"));
             String screenshotPath = resolveScreenshotPath(def.id(), message);
 
             results.add(new AliraTestResult(def.id(), def.description(), passed, message, screenshotPath, duration, ranAt));
