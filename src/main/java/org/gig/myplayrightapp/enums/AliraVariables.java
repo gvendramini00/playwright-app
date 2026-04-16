@@ -7,12 +7,15 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public enum AliraVariables {
     SCREENSHOT_ALIRA_PATH("screenshots/alira/"),
+    SCREENSHOT_STAGING_PATH("screenshots/staging/"),
     SCREENSHOT_CGM_PATH("screenshots/cgm/"),
     SCREENSHOT_GP_PATH("screenshots/gp/"),
     ALIRA_DASHBOARD("Alira Dashboard"),
     ALIRA_PLAYER("test"),
     LOGIN_URL("https://gms.pre.tecnalis.com/alira-server/login.jsp"),
+    LOGIN_STAGING_URL("https://gms-staging.pre.tecnalis.com/alira-server/login.jsp"),
     BASE_URL("https://gms.pre.tecnalis.com/alira-server/"),
+    BASE_STAGING_URL("https://gms-staging.pre.tecnalis.com/alira-server/"),
     ERR_NAV_FAILED("KO — Navigation failed. Expected "),
     ERR_NAV_BUT_GOT(" but got "),
     ERR_NAV_GENERAL("KO — Error during navigation: "),

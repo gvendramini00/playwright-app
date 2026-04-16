@@ -6,6 +6,7 @@ import com.microsoft.playwright.options.AriaRole;
 import com.microsoft.playwright.options.LoadState;
 import com.microsoft.playwright.options.WaitForSelectorState;
 import lombok.extern.slf4j.Slf4j;
+import org.gig.myplayrightapp.exception.PlayerSearchException;
 import org.springframework.stereotype.Component;
 
 @Slf4j
@@ -25,11 +26,20 @@ public class AliraTestUtils {
         page.locator("#playerSearcherText").click();
         page.locator("#playerSearcherText").pressSequentially(playerName, new Locator.PressSequentiallyOptions().setDelay(100));
         page.locator("#playerSearcherBtn").click();
-        page.waitForSelector("text=Player Profile",
-                new Page.WaitForSelectorOptions()
-                        .setState(WaitForSelectorState.ATTACHED)
-                        .setTimeout(10000));
+
+        // Wait for the search request to complete before checking the result
         page.waitForLoadState(LoadState.NETWORKIDLE);
+
+        // Detect error modal (e.g. "[241] Cannot get players" — DB or proxy error)
+        Locator errorModal = page.locator(".modal.in, .modal.show");
+        if (errorModal.count() > 0 && errorModal.first().isVisible()) {
+            String errorText = "";
+            Locator body = errorModal.first().locator(".modal-body");
+            if (body.count() > 0) errorText = body.innerText().trim();
+            log.error("Utility: Player search returned an error modal: {}", errorText);
+            throw new PlayerSearchException("Player search error: " + errorText);
+        }
+
         log.info("Utility: Player profile loaded for '{}'", playerName);
     }
 

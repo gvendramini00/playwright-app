@@ -4,6 +4,7 @@ import com.microsoft.playwright.Locator;
 import com.microsoft.playwright.Page;
 import com.microsoft.playwright.options.AriaRole;
 import com.microsoft.playwright.options.LoadState;
+import com.microsoft.playwright.options.WaitForSelectorState;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.gig.myplayrightapp.util.AliraLoginUtil;
@@ -56,9 +57,12 @@ public class AttachedDocServiceImpl implements AttachedDocService {
                         .locator("span").nth(1).click();
                 page.getByRole(AriaRole.CELL, new Page.GetByRoleOptions().setName("15")).click();
 
-                // Select document type
-                page.locator("button").filter(new Locator.FilterOptions().setHasText("Nothing Selected")).nth(1).click();
-                page.getByRole(AriaRole.OPTION, new Page.GetByRoleOptions().setName("Admin")).click();
+                // Select document type: open dropdown and force-click the first option
+                // (Bootstrap Select marks inner <a> elements as hidden via overflow — force bypasses the visibility check)
+                page.locator("button").filter(new Locator.FilterOptions().setHasText("Nothing Selected")).nth(0).click();
+                Locator firstDocTypeOption = page.locator(".open .dropdown-menu.inner li a").first();
+                firstDocTypeOption.waitFor(new Locator.WaitForOptions().setState(WaitForSelectorState.ATTACHED).setTimeout(5000));
+                firstDocTypeOption.click(new Locator.ClickOptions().setForce(true));
 
                 // Select visibility: Other
                 page.getByTitle("Other").click();

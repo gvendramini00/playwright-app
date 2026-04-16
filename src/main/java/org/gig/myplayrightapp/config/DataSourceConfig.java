@@ -17,11 +17,7 @@ public class DataSourceConfig {
             @Value("${datasource.cgm.url}") String url,
             @Value("${datasource.cgm.username}") String user,
             @Value("${datasource.cgm.password}") String pass) {
-        HikariDataSource ds = new HikariDataSource();
-        ds.setJdbcUrl(url);
-        ds.setUsername(user);
-        ds.setPassword(pass);
-        return ds;
+        return buildDataSource(url, user, pass);
     }
 
     @Bean
@@ -29,23 +25,37 @@ public class DataSourceConfig {
             @Value("${datasource.gppt.url}") String url,
             @Value("${datasource.gppt.username}") String user,
             @Value("${datasource.gppt.password}") String pass) {
-        HikariDataSource ds = new HikariDataSource();
-        ds.setJdbcUrl(url);
-        ds.setUsername(user);
-        ds.setPassword(pass);
-        return ds;
+        return buildDataSource(url, user, pass);
+    }
+
+    @Bean
+    @Lazy
+    public DataSource stagingDataSource(
+            @Value("${datasource.staging.url}") String url,
+            @Value("${datasource.staging.username}") String user,
+            @Value("${datasource.staging.password}") String pass) {
+        return buildDataSource(url, user, pass);
     }
 
     /** Primary DS used by JPA; routes per request via BrandContext. */
     @Primary
     @Bean
-    public DataSource routingDataSource(DataSource cgmDataSource, DataSource gpptDataSource) {
+    public DataSource routingDataSource(DataSource cgmDataSource, DataSource gpptDataSource, @Lazy DataSource stagingDataSource) {
         BrandRoutingDataSource routing = new BrandRoutingDataSource();
         Map<Object, Object> targets = new HashMap<>();
         targets.put(Brand.CGM, cgmDataSource);
         targets.put(Brand.GP_PT, gpptDataSource);
+        targets.put(Brand.STAGING, stagingDataSource);
         routing.setTargetDataSources(targets);
-        routing.setDefaultTargetDataSource(cgmDataSource); // default if none set
+        routing.setDefaultTargetDataSource(cgmDataSource);
         return routing;
+    }
+
+    private DataSource buildDataSource(String url, String user, String pass) {
+        HikariDataSource ds = new HikariDataSource();
+        ds.setJdbcUrl(url);
+        ds.setUsername(user);
+        ds.setPassword(pass);
+        return ds;
     }
 }

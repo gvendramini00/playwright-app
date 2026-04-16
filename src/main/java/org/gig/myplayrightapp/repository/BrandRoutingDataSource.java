@@ -8,7 +8,7 @@ import org.springframework.jdbc.datasource.lookup.AbstractRoutingDataSource;
 public class BrandRoutingDataSource extends AbstractRoutingDataSource {
     @Override
     protected Object determineCurrentLookupKey() {
-        log.info("DetermineCurrentLookupKey " + BrandContext.get());
+        log.info("DetermineCurrentLookupKey {}", BrandContext.get());
         return BrandContext.get();
     }
 }

@@ -1,0 +1,58 @@
+package org.gig.myplayrightapp.controller;
+
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.tags.Tag;
+import lombok.RequiredArgsConstructor;
+import org.gig.myplayrightapp.service.staging.AliraStagingTestService;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+@Tag(name = "Alira — Staging Tests", description = "Tests for the Alira Staging Back Office (gms-staging.pre.tecnalis.com) — separate DB at 10.64.134.11")
+@RestController
+@RequestMapping("/api/test/alira-staging")
+@RequiredArgsConstructor
+public class AliraStagingController {
+
+    private final AliraStagingTestService aliraStagingTestService;
+
+    @Operation(summary = "Health check", description = "Simple ping to verify the staging API is up and responding.")
+    @ApiResponse(responseCode = "200", description = "Returns 'PONG!'", content = @Content(mediaType = "text/plain"))
+    @GetMapping("/ping")
+    public String testPing() {
+        return "PONG!";
+    }
+
+    @Operation(
+        summary = "NL2-TC-001 — Staging Login",
+        description = "Login succeeds and landing dashboard loads with no DB errors in tomcat log. Validates back office auth and initial OGP pool connectivity via ProxySQL\n " +
+                      "A screenshot is saved to screenshots/staging/ on completion."
+    )
+    @ApiResponse(responseCode = "200", description = "OK — staging login succeeded", content = @Content(mediaType = "text/plain"))
+    @ApiResponse(responseCode = "500", description = "KO — with error details on failure", content = @Content(mediaType = "text/plain"))
+    @GetMapping("/testCase001")
+    public ResponseEntity<String> testCase001() {
+        String result = aliraStagingTestService.testCase001LoginTest();
+        return result.startsWith("OK") || result.startsWith("SKIPPED")
+                ? ResponseEntity.ok(result)
+                : ResponseEntity.internalServerError().body(result);
+    }
+
+    @Operation(
+        summary = "NL2-TC-002 — Staging Player Profile navigation",
+        description = "Logs in to Alira Staging and searches for the configured test player, then verifies the Player Profile page loads correctly. " +
+                      "A screenshot is saved to screenshots/staging/ on completion."
+    )
+    @ApiResponse(responseCode = "200", description = "OK — Staging Player Profile loaded", content = @Content(mediaType = "text/plain"))
+    @ApiResponse(responseCode = "500", description = "KO — with error details on failure", content = @Content(mediaType = "text/plain"))
+    @GetMapping("/testCase002")
+    public ResponseEntity<String> testCase002() {
+        String result = aliraStagingTestService.testCase002NavigatePlayerProfile();
+        return result.startsWith("OK") || result.startsWith("SKIPPED")
+                ? ResponseEntity.ok(result)
+                : ResponseEntity.internalServerError().body(result);
+    }
+}
