@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>GIG QA — Automated Test Suite</title>
+  <link rel="stylesheet" href="/webjars/swagger-ui/swagger-ui.css" />
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      background: #f4f6f9;
+      min-height: 100vh;
+    }
+
+    /* ── Header ── */
+    .header {
+      background: #1f4980;
+      color: #fff;
+      padding: 20px 40px;
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+    .header h1 { font-size: 1.4rem; font-weight: 600; }
+    .header p  { font-size: 0.85rem; opacity: 0.75; margin-top: 2px; }
+    .back-btn {
+      margin-left: auto;
+      background: rgba(255,255,255,0.15);
+      color: #fff;
+      border: 1px solid rgba(255,255,255,0.4);
+      padding: 7px 16px;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 0.85rem;
+      text-decoration: none;
+      display: none;
+    }
+    .back-btn:hover { background: rgba(255,255,255,0.25); }
+
+    /* ── Landing grid ── */
+    #landing {
+      max-width: 960px;
+      margin: 48px auto;
+      padding: 0 24px;
+    }
+    #landing h2 {
+      font-size: 1.1rem;
+      color: #444;
+      margin-bottom: 28px;
+      font-weight: 400;
+    }
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(420px, 1fr));
+      gap: 20px;
+    }
+    .card {
+      background: #fff;
+      border-radius: 10px;
+      border: 1px solid #dde3ed;
+      padding: 28px;
+      cursor: pointer;
+      transition: box-shadow 0.15s, transform 0.15s;
+      text-decoration: none;
+      display: flex;
+      align-items: flex-start;
+      gap: 18px;
+    }
+    .card:hover {
+      box-shadow: 0 6px 24px rgba(31,73,128,0.13);
+      transform: translateY(-2px);
+    }
+    .card-icon {
+      width: 48px;
+      height: 48px;
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.5rem;
+      flex-shrink: 0;
+    }
+    .card-body { flex: 1; }
+    .card-title {
+      font-size: 1rem;
+      font-weight: 600;
+      color: #1f4980;
+      margin-bottom: 5px;
+    }
+    .card-desc  { font-size: 0.83rem; color: #666; line-height: 1.5; }
+    .card-meta  { margin-top: 10px; font-size: 0.78rem; color: #999; }
+    .badge {
+      display: inline-block;
+      background: #e8f0fb;
+      color: #1f4980;
+      border-radius: 4px;
+      padding: 2px 8px;
+      font-size: 0.75rem;
+      font-weight: 500;
+      margin-right: 4px;
+    }
+
+    /* ── Swagger UI container ── */
+    #swagger-wrapper { display: none; }
+    #swagger-ui .topbar { display: none; }
+  </style>
+</head>
+<body>
+
+<div class="header">
+  <div>
+    <h1>GIG QA — Automated Test Suite</h1>
+    <p>Playwright + Spring Boot &nbsp;|&nbsp; Select an environment to explore its tests</p>
+  </div>
+  <a class="back-btn" id="back-btn" href="/swagger-ui/index.html">&#8592; All Environments</a>
+</div>
+
+<!-- Landing page -->
+<div id="landing">
+  <h2>Choose a test environment</h2>
+  <div class="grid">
+
+    <a class="card" onclick="loadEnv('alira-pre')">
+      <div class="card-icon" style="background:#dbeafe;">🏢</div>
+      <div class="card-body">
+        <div class="card-title">Alira Pre-Production</div>
+        <div class="card-desc">Back office tests for gms.pre.tecnalis.com — login, player profiles, games, website, marketing, widgets.</div>
+        <div class="card-meta">
+          <span class="badge">18 tests</span>
+          <span class="badge">Mass runner</span>
+        </div>
+      </div>
+    </a>
+
+    <a class="card" onclick="loadEnv('alira-staging')">
+      <div class="card-icon" style="background:#dcfce7;">🧪</div>
+      <div class="card-body">
+        <div class="card-title">Alira Staging</div>
+        <div class="card-desc">Back office tests for gms-staging.pre.tecnalis.com — separate DB at 10.64.134.11.</div>
+        <div class="card-meta">
+          <span class="badge">3 tests</span>
+          <span class="badge">Mass runner</span>
+        </div>
+      </div>
+    </a>
+
+    <a class="card" onclick="loadEnv('cgm')">
+      <div class="card-icon" style="background:#fef9c3;">🎰</div>
+      <div class="card-body">
+        <div class="card-title">Casino Gran Madrid Pre</div>
+        <div class="card-desc">Registration flow tests for the Casino Gran Madrid pre-production site — modal, Veridas, manual registration, validation and duplicate checks.</div>
+        <div class="card-meta">
+          <span class="badge">6 tests</span>
+        </div>
+      </div>
+    </a>
+
+    <a class="card" onclick="loadEnv('gppt')">
+      <div class="card-icon" style="background:#fce7f3;">🇵🇹</div>
+      <div class="card-body">
+        <div class="card-title">Golden Park Portugal Pre</div>
+        <div class="card-desc">Registration tests for the Golden Park Portugal dev site — unique player creation and duplicate NIF validation.</div>
+        <div class="card-meta">
+          <span class="badge">2 tests</span>
+        </div>
+      </div>
+    </a>
+
+  </div>
+</div>
+
+<!-- Swagger UI container -->
+<div id="swagger-wrapper">
+  <div id="swagger-ui"></div>
+</div>
+
+<script src="/webjars/swagger-ui/swagger-ui-bundle.js"></script>
+<script src="/webjars/swagger-ui/swagger-ui-standalone-preset.js"></script>
+<script>
+  const VALID_ENVS = new Set(['alira-pre', 'alira-staging', 'cgm', 'gppt']);
+
+  function loadEnv(key) {
+    if (!VALID_ENVS.has(key)) return;
+
+    // Push to URL so the back button and refresh work
+    history.pushState({ env: key }, '', '/swagger-ui/index.html?env=' + key);
+    showSwagger(key);
+  }
+
+  function showSwagger(key) {
+    document.getElementById('landing').style.display        = 'none';
+    document.getElementById('swagger-wrapper').style.display = 'block';
+    document.getElementById('back-btn').style.display       = 'inline-block';
+
+    // Clear any previous SwaggerUI instance before re-rendering
+    document.getElementById('swagger-ui').innerHTML = '';
+
+    SwaggerUIBundle({
+      url: '/v3/api-docs/' + key,
+      dom_id: '#swagger-ui',
+      deepLinking: false,
+      presets: [
+        SwaggerUIBundle.presets.apis
+      ],
+      layout: 'BaseLayout',
+      tagsSorter: 'alpha'
+    });
+  }
+
+  // Handle back/forward navigation
+  window.addEventListener('popstate', function(e) {
+    if (e.state && e.state.env) {
+      showSwagger(e.state.env);
+    } else {
+      document.getElementById('landing').style.display         = 'block';
+      document.getElementById('swagger-wrapper').style.display = 'none';
+      document.getElementById('back-btn').style.display        = 'none';
+    }
+  });
+
+  // On load: check if ?env= is already in the URL (e.g. direct link or refresh)
+  (function() {
+    const params = new URLSearchParams(window.location.search);
+    const env    = params.get('env');
+    if (VALID_ENVS.has(env)) showSwagger(env);
+  })();
+</script>
+
+</body>
+</html>
