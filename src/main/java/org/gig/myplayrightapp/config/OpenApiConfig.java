@@ -45,7 +45,7 @@ public class OpenApiConfig {
                                 .description("Tests for Player Profile widgets in the Alira Back Office — covers Attached Documentation (add, edit, delete)"),
                         new Tag()
                                 .name("Alira — Staging Tests")
-                                .description("Tests for the Alira Staging Back Office (gms-staging.pre.tecnalis.com) — separate DB at 10.64.134.11"),
+                                .description("Tests for the Alira Staging Back Office (gms-staging.pre.tecnalis.com) — separate DB at 10.64.134.11. Includes a mass test runner that generates an Excel report."),
                         new Tag()
                                 .name("Alira — Mass Test Runner")
                                 .description("Runs all 17 Alira test cases in sequence and returns a downloadable Excel report with results and screenshot references"),

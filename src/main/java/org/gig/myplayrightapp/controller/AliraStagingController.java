@@ -5,7 +5,10 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
+import org.gig.myplayrightapp.service.staging.AliraStagingMassTestService;
 import org.gig.myplayrightapp.service.staging.AliraStagingTestService;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -18,6 +21,7 @@ import org.springframework.web.bind.annotation.RestController;
 public class AliraStagingController {
 
     private final AliraStagingTestService aliraStagingTestService;
+    private final AliraStagingMassTestService aliraStagingMassTestService;
 
     @Operation(summary = "Health check", description = "Simple ping to verify the staging API is up and responding.")
     @ApiResponse(responseCode = "200", description = "Returns 'PONG!'", content = @Content(mediaType = "text/plain"))
@@ -54,5 +58,20 @@ public class AliraStagingController {
         return result.startsWith("OK") || result.startsWith("SKIPPED")
                 ? ResponseEntity.ok(result)
                 : ResponseEntity.internalServerError().body(result);
+    }
+
+    @Operation(
+        summary = "Staging Mass Test Runner",
+        description = "Runs all Alira Staging test cases in sequence and returns a downloadable Excel report with results and screenshot references."
+    )
+    @ApiResponse(responseCode = "200", description = "Excel report (.xlsx) returned as a file download", content = @Content(mediaType = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"))
+    @GetMapping(value = "/runAll", produces = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet")
+    public ResponseEntity<byte[]> runAll() {
+        byte[] report = aliraStagingMassTestService.runAllStagingTestsAndGenerateReport();
+        String filename = "staging-test-report.xlsx";
+        return ResponseEntity.ok()
+                .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + filename + "\"")
+                .contentType(MediaType.parseMediaType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"))
+                .body(report);
     }
 }
