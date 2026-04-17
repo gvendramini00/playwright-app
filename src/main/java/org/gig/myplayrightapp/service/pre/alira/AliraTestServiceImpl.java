@@ -38,10 +38,10 @@ public class AliraTestServiceImpl implements AliraTestService {
             return playwrightUtil.withPage(page -> {
                 log.info("Starting login test for user: {}", aliraUsername);
                 page.navigate(aliraLoginUrl);
-                page.getByPlaceholder("User name").fill(aliraUsername);
-                page.getByPlaceholder("Password").fill(aliraPassword);
-                page.getByRole(AriaRole.LINK, new Page.GetByRoleOptions().setName("Sign in")).click();
-                page.waitForSelector("text=Alira Dashboard", new Page.WaitForSelectorOptions().setState(WaitForSelectorState.ATTACHED).setTimeout(5000));
+                page.getByPlaceholder(PLACEHOLDER_USERNAME.getValue()).fill(aliraUsername);
+                page.getByPlaceholder(PLACEHOLDER_PASSWORD.getValue()).fill(aliraPassword);
+                page.getByRole(AriaRole.LINK, new Page.GetByRoleOptions().setName(LINK_SIGN_IN.getValue())).click();
+                page.waitForSelector(TEXT_ALIRA_DASHBOARD_SELECTOR.getValue(), new Page.WaitForSelectorOptions().setState(WaitForSelectorState.ATTACHED).setTimeout(5000));
                 page.waitForLoadState(LoadState.NETWORKIDLE);
                 screenshotUtil.takeScreenshot(page, SCREENSHOT_ALIRA_PATH, "testCase001");
                 log.info("Login successful for user: {}", aliraUsername);
@@ -61,7 +61,7 @@ public class AliraTestServiceImpl implements AliraTestService {
                 page.locator("#playerSearcherText").click();
                 page.locator("#playerSearcherText").fill(ALIRA_PLAYER.getValue());
                 page.locator("#playerSearcherBtn").click();
-                page.waitForSelector("text=Player Profile", new Page.WaitForSelectorOptions().setState(WaitForSelectorState.ATTACHED).setTimeout(5000));
+                page.waitForSelector("text=" + TEXT_PLAYER_PROFILE.getValue(), new Page.WaitForSelectorOptions().setState(WaitForSelectorState.ATTACHED).setTimeout(5000));
                 page.waitForLoadState(LoadState.NETWORKIDLE);
                 screenshotUtil.takeScreenshot(page, SCREENSHOT_ALIRA_PATH, "testCase002");
                 log.info("Player profile successful for player: {}", ALIRA_PLAYER.getValue());

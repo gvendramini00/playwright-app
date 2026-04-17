@@ -17,7 +17,7 @@ import java.util.Locale;
 import java.util.Optional;
 import java.util.regex.Pattern;
 
-import static org.gig.myplayrightapp.enums.AliraVariables.SCREENSHOT_GP_PATH;
+import static org.gig.myplayrightapp.enums.GpptVariables.*;
 
 @Slf4j
 @Service
@@ -28,14 +28,13 @@ public class GoldenParkPtTestService {
     private final ScreenshotUtil screenshotUtil;
     private final PlaywrightUtil playwrightUtil;
 
-    private static final String BASE_URL = "https://goldenpark-pt.dev.tecnalis.com/";
 
     @UseBrand(Brand.GP_PT)
     public String runManualRegistrationTest() {
         InsertPlayerGpPtDTO dto = RegistrationDataUtils.generateUniquePortugalInsertPlayerDTO(playerService);
         try {
             return playwrightUtil.withPage(page -> {
-                page.navigate(BASE_URL);
+                page.navigate(GPPT_BASE_URL.getValue());
                 page.getByRole(AriaRole.LINK, new Page.GetByRoleOptions().setName(Pattern.compile("Reg(í|i)strate|Registar|Registar-se", Pattern.CASE_INSENSITIVE))).click();
 
                 // Step 1 - account
@@ -111,7 +110,7 @@ public class GoldenParkPtTestService {
         var es = maybeExisting.get();
         try {
             return playwrightUtil.withPage(page -> {
-                page.navigate(BASE_URL);
+                page.navigate(GPPT_BASE_URL.getValue());
                 page.getByRole(AriaRole.LINK, new Page.GetByRoleOptions().setName(Pattern.compile("Reg(í|i)strate|Registar|Registar-se", Pattern.CASE_INSENSITIVE))).click();
 
                 page.locator("#name").fill(es.firstName());

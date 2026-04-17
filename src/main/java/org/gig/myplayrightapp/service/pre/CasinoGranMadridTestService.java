@@ -17,7 +17,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
-import static org.gig.myplayrightapp.enums.AliraVariables.SCREENSHOT_CGM_PATH;
+import static org.gig.myplayrightapp.enums.CgmVariables.*;
 
 @Slf4j
 @Service
@@ -32,7 +32,7 @@ public class CasinoGranMadridTestService {
         log.info("✅ TestCase001 executed: Go to preprod site");
         try {
             return playwrightUtil.withPage(page -> {
-                page.navigate("https://casinogranmadridonline.pre.tecnalis.com/");
+                page.navigate(CGM_BASE_URL.getValue());
                 String title = page.title();
                 screenshotUtil.takeScreenshot(page, SCREENSHOT_CGM_PATH, "testCase001");
                 return "OK — Site loaded. Title: " + title;
@@ -53,8 +53,8 @@ public class CasinoGranMadridTestService {
                     .setRecordHarMode(HarMode.MINIMAL),
                 page -> {
                     page.offConsoleMessage(consoleMessage -> log.error(consoleMessage.toString()));
-                    page.navigate("https://casinogranmadridonline.pre.tecnalis.com/");
-                    page.getByText("REGÍSTRATE").click();
+                    page.navigate(CGM_BASE_URL.getValue());
+                    page.getByText(CGM_BTN_REGISTER.getValue()).click();
                     Locator heading = page.getByRole(AriaRole.HEADING, new Page.GetByRoleOptions().setName("Regístrate ahora."));
                     heading.waitFor(new Locator.WaitForOptions().setTimeout(5000));
                     page.waitForTimeout(1000);
@@ -78,15 +78,15 @@ public class CasinoGranMadridTestService {
                 new Browser.NewContextOptions()
                     .setPermissions(List.of("camera"))
                     .setViewportSize(1280, 720)
-                    .setBaseURL("https://casinogranmadridonline.pre.tecnalis.com/"),
+                    .setBaseURL(CGM_BASE_URL.getValue()),
                 page -> {
                     page.context().grantPermissions(
                             List.of("camera"),
                             new BrowserContext.GrantPermissionsOptions()
-                                    .setOrigin("https://casinogranmadridonline.pre.tecnalis.com/"));
-                    page.navigate("https://casinogranmadridonline.pre.tecnalis.com/");
-                    page.getByText("REGÍSTRATE").click();
-                    page.getByRole(AriaRole.LINK, new Page.GetByRoleOptions().setName("REGISTRO RÁPIDO (~30 segs, só")).click();
+                                    .setOrigin(CGM_BASE_URL.getValue()));
+                    page.navigate(CGM_BASE_URL.getValue());
+                    page.getByText(CGM_BTN_REGISTER.getValue()).click();
+                    page.getByRole(AriaRole.LINK, new Page.GetByRoleOptions().setName(CGM_LINK_FAST_REGISTER.getValue())).click();
                     Locator iframeLocator = page.locator("#XpressID-iframe");
                     iframeLocator.waitFor(new Locator.WaitForOptions().setTimeout(10000));
                     FrameLocator iframe = page.frameLocator("#XpressID-iframe");
@@ -113,9 +113,9 @@ public class CasinoGranMadridTestService {
         log.info("Unique player to be inserted: {}", dto.email());
         try {
             return playwrightUtil.withPage(page -> {
-                page.navigate("https://casinogranmadridonline.pre.tecnalis.com/");
-                page.getByText("REGÍSTRATE").click();
-                page.getByRole(AriaRole.LINK, new Page.GetByRoleOptions().setName("REGISTRO MANUAL (~12 horas)")).click();
+                page.navigate(CGM_BASE_URL.getValue());
+                page.getByText(CGM_BTN_REGISTER.getValue()).click();
+                page.getByRole(AriaRole.LINK, new Page.GetByRoleOptions().setName(CGM_LINK_MANUAL_REGISTER.getValue())).click();
 
                 page.locator("#name").fill(dto.firstName());
                 page.locator("#middlename").fill(dto.middleName());
@@ -184,9 +184,9 @@ public class CasinoGranMadridTestService {
         log.info("TestCase005 executed: Registration with missing name");
         try {
             return playwrightUtil.withPage(page -> {
-                page.navigate("https://casinogranmadridonline.pre.tecnalis.com/");
-                page.getByText("REGÍSTRATE").click();
-                page.getByRole(AriaRole.LINK, new Page.GetByRoleOptions().setName("REGISTRO MANUAL (~12 horas)")).click();
+                page.navigate(CGM_BASE_URL.getValue());
+                page.getByText(CGM_BTN_REGISTER.getValue()).click();
+                page.getByRole(AriaRole.LINK, new Page.GetByRoleOptions().setName(CGM_LINK_MANUAL_REGISTER.getValue())).click();
                 page.locator("#surname").click();
                 String currentURL = page.url();
                 page.getByRole(AriaRole.LINK, new Page.GetByRoleOptions().setName("Continuar")).click();
@@ -215,9 +215,9 @@ public class CasinoGranMadridTestService {
         InsertPlayerDTO dto = maybeExistingPlayer.get();
         try {
             return playwrightUtil.withPage(page -> {
-                page.navigate("https://casinogranmadridonline.pre.tecnalis.com/");
-                page.getByText("REGÍSTRATE").click();
-                page.getByRole(AriaRole.LINK, new Page.GetByRoleOptions().setName("REGISTRO MANUAL (~12 horas)")).click();
+                page.navigate(CGM_BASE_URL.getValue());
+                page.getByText(CGM_BTN_REGISTER.getValue()).click();
+                page.getByRole(AriaRole.LINK, new Page.GetByRoleOptions().setName(CGM_LINK_MANUAL_REGISTER.getValue())).click();
 
                 page.locator("#name").fill(dto.firstName());
                 page.locator("#middlename").fill(dto.middleName());

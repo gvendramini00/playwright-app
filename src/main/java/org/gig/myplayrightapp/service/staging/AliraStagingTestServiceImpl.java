@@ -78,29 +78,29 @@ public class AliraStagingTestServiceImpl implements AliraStagingTestService {
 
                 try {
                     page.navigate(stagingBaseUrl + "index.aml");
-                    page.getByRole(AriaRole.LINK, new Page.GetByRoleOptions().setName(" Website")).click();
-                    page.getByRole(AriaRole.LINK, new Page.GetByRoleOptions().setName("CMS")).click();
+                    page.getByRole(AriaRole.LINK, new Page.GetByRoleOptions().setName(STAGING_WEBSITE_TAB.getValue())).click();
+                    page.getByRole(AriaRole.LINK, new Page.GetByRoleOptions().setName(LINK_CMS.getValue())).click();
 
-                    Locator bannersTab = page.getByRole(AriaRole.TAB, new Page.GetByRoleOptions().setName("Banners"));
+                    Locator bannersTab = page.getByRole(AriaRole.TAB, new Page.GetByRoleOptions().setName(STAGING_BANNERS_TAB.getValue()));
                     page.waitForTimeout(2000);
                     bannersTab.click();
 
                     page.getByRole(AriaRole.BUTTON, new Page.GetByRoleOptions().setName("Nothing Selected")).click();
-                    page.getByRole(AriaRole.LISTBOX).getByRole(AriaRole.OPTION, new Locator.GetByRoleOptions().setName("Banner Home Landscape -")).click();
+                    page.getByRole(AriaRole.LISTBOX).getByRole(AriaRole.OPTION, new Locator.GetByRoleOptions().setName(STAGING_BANNER_HOME_LANDSCAPE.getValue())).click();
                     page.waitForTimeout(2000);
 
-                    page.getByRole(AriaRole.LINK, new Page.GetByRoleOptions().setName("- Banner Landscape 1 template")).click();
+                    page.getByRole(AriaRole.LINK, new Page.GetByRoleOptions().setName(STAGING_BANNER_LANDSCAPE_ORIGINAL.getValue())).click();
                     page.waitForTimeout(2000);
 
                     page.getByLabel("Name", new Page.GetByLabelOptions().setExact(true)).click();
-                    page.getByLabel("Name", new Page.GetByLabelOptions().setExact(true)).fill("Banner Landscape 1 template edit");
+                    page.getByLabel("Name", new Page.GetByLabelOptions().setExact(true)).fill(STAGING_BANNER_LANDSCAPE_EDIT_NAME.getValue());
                     page.getByRole(AriaRole.BUTTON, new Page.GetByRoleOptions().setName("Save")).click();
 
                     page.getByLabel("Name", new Page.GetByLabelOptions().setExact(true)).click();
-                    page.getByLabel("Name", new Page.GetByLabelOptions().setExact(true)).fill("Banner Landscape 1 template");
+                    page.getByLabel("Name", new Page.GetByLabelOptions().setExact(true)).fill(STAGING_BANNER_LANDSCAPE_RESTORED_NAME.getValue());
                     page.getByRole(AriaRole.BUTTON, new Page.GetByRoleOptions().setName("Save")).click();
                     page.waitForTimeout(1000);
-                    page.getByText("Success: Saved").click();
+                    page.getByText(STAGING_SUCCESS_SAVED.getValue()).click();
 
                 } catch (Exception e) {
                     String screenshotPath = screenshotUtil.takeScreenshot(page, SCREENSHOT_STAGING_PATH, "staging_testCase003_failed");

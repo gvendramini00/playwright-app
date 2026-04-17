@@ -40,7 +40,7 @@ public class AttachedDocServiceImpl implements AttachedDocService {
                 aliraTestUtils.navigateToPlayerProfile(page, ALIRA_PLAYER.getValue());
 
                 // Select Attached Documentation widget
-                aliraTestUtils.selectWidget(page, "Attached Documentation");
+                aliraTestUtils.selectWidget(page, WIDGET_ATTACHED_DOCUMENTATION.getValue());
                 page.getByRole(AriaRole.BUTTON, new Page.GetByRoleOptions().setName("New attach")).click();
 
                 // Upload file

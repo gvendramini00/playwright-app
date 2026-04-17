@@ -28,7 +28,7 @@ public class AliraNavigateTabWebsiteServiceImpl implements AliraNavigateTabWebsi
                 aliraLoginUtil.login(page);
                 page.getByRole(AriaRole.LINK, new Page.GetByRoleOptions().setName(WEBSITE_TAB.getValue())).click();
                 page.waitForLoadState(LoadState.DOMCONTENTLOADED);
-                page.getByRole(AriaRole.LINK, new Page.GetByRoleOptions().setName("CMS")).click();
+                page.getByRole(AriaRole.LINK, new Page.GetByRoleOptions().setName(LINK_CMS.getValue())).click();
                 String targetUrl = BASE_URL.getValue() + "cms.aml#elf_l1_Lw";
                 page.waitForURL("**/" + "cms.aml#elf_l1_Lw");
                 if (page.url().contains(targetUrl) || targetUrl.contains(page.url())) {
