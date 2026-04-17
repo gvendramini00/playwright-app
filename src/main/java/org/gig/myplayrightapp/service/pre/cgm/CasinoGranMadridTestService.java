@@ -1,4 +1,4 @@
-package org.gig.myplayrightapp.service.pre;
+package org.gig.myplayrightapp.service.pre.cgm;
 
 import com.microsoft.playwright.*;
 import com.microsoft.playwright.options.AriaRole;
@@ -7,6 +7,7 @@ import com.microsoft.playwright.options.HarMode;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.gig.myplayrightapp.dto.InsertPlayerDTO;
+import org.gig.myplayrightapp.service.pre.PlayerService;
 import org.gig.myplayrightapp.util.PlaywrightUtil;
 import org.gig.myplayrightapp.util.RegistrationDataUtils;
 import org.gig.myplayrightapp.util.ScreenshotUtil;

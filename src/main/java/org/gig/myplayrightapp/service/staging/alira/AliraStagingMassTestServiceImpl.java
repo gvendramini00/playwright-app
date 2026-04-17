@@ -1,4 +1,4 @@
-package org.gig.myplayrightapp.service.staging;
+package org.gig.myplayrightapp.service.staging.alira;
 
 import lombok.extern.slf4j.Slf4j;
 import org.gig.myplayrightapp.service.AbstractMassTestService;

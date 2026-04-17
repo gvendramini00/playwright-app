@@ -1,4 +1,4 @@
-package org.gig.myplayrightapp.service.pre;
+package org.gig.myplayrightapp.service.pre.gp.pt;
 
 import com.microsoft.playwright.*;
 import com.microsoft.playwright.options.AriaRole;
@@ -8,6 +8,7 @@ import org.gig.myplayrightapp.aop.UseBrand;
 import org.gig.myplayrightapp.dto.InsertPlayerDTO;
 import org.gig.myplayrightapp.dto.InsertPlayerGpPtDTO;
 import org.gig.myplayrightapp.enums.Brand;
+import org.gig.myplayrightapp.service.pre.PlayerService;
 import org.gig.myplayrightapp.util.PlaywrightUtil;
 import org.gig.myplayrightapp.util.RegistrationDataUtils;
 import org.gig.myplayrightapp.util.ScreenshotUtil;

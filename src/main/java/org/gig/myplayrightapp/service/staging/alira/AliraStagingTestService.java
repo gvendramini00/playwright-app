@@ -1,4 +1,4 @@
-package org.gig.myplayrightapp.service.staging;
+package org.gig.myplayrightapp.service.staging.alira;
 
 public interface AliraStagingTestService {
 
