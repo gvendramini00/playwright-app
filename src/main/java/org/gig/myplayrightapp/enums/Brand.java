@@ -10,7 +10,7 @@ public enum Brand {
 
     CGM       ("/api/test/cgm"),
     GP_PT     ("/api/test/gp-pt"),
-    STAGING   ("/api/test/alira-staging"),  // must come before ALIRA — prefix of ALIRA
+    STAGING   ("/api/test/alira-staging"),
     ALIRA     ("/api/test/alira");
 
     private final String urlPrefix;
@@ -19,7 +19,6 @@ public enum Brand {
         this.urlPrefix = urlPrefix;
     }
 
-    /** Returns the first Brand whose URL prefix matches the given URI, or empty if none match. */
     public static Optional<Brand> fromUri(String uri) {
         return Arrays.stream(values())
                 .filter(b -> uri.startsWith(b.urlPrefix))
