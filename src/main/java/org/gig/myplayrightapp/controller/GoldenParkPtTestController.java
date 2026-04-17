@@ -6,10 +6,17 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.gig.myplayrightapp.service.pre.GoldenParkPtTestService;
+import org.gig.myplayrightapp.service.pre.GpptMassTestService;
+import org.springframework.http.ContentDisposition;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 
 @Tag(name = "Golden Park PT — Registration Tests", description = "Automated tests for the Golden Park Portugal dev site — covers manual registration and duplicate NIF validation")
 @RestController
@@ -18,12 +25,29 @@ import org.springframework.web.bind.annotation.RestController;
 public class GoldenParkPtTestController {
 
     private final GoldenParkPtTestService service;
+    private final GpptMassTestService gpptMassTestService;
 
     @Operation(summary = "Health check", description = "Simple ping to verify the API is up and responding.")
     @ApiResponse(responseCode = "200", description = "Returns 'PONG!'", content = @Content(mediaType = "text/plain"))
     @GetMapping("/ping")
     public String testPing() {
         return "PONG!";
+    }
+
+    @Operation(
+        summary = "GP-PT Mass Test Runner",
+        description = "Runs all Golden Park Portugal test cases in sequence and returns a downloadable Excel report with results and screenshot references."
+    )
+    @ApiResponse(responseCode = "200", description = "Excel report (.xlsx) with full test results",
+            content = @Content(mediaType = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"))
+    @GetMapping(value = "/runAll", produces = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet")
+    public ResponseEntity<byte[]> runAll() {
+        byte[] report = gpptMassTestService.runAllGpptTestsAndGenerateReport();
+        String filename = "gppt_report_" + LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMdd_HHmmss")) + ".xlsx";
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.parseMediaType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"));
+        headers.setContentDisposition(ContentDisposition.attachment().filename(filename).build());
+        return ResponseEntity.ok().headers(headers).body(report);
     }
 
     @Operation(

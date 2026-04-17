@@ -16,6 +16,7 @@ Database: `192.168.16.56`
 | `GET /api/test/cgm/testCase004` | Manual registration with a generated unique player |
 | `GET /api/test/cgm/testCase005` | Manual registration with missing name — verify validation error |
 | `GET /api/test/cgm/testCase006` | Manual registration with duplicate DNI/NIE — verify duplicate error |
+| `GET /api/test/cgm/runAll` | Run all 6 CGM tests in sequence — returns downloadable Excel report |
 
 ---
 

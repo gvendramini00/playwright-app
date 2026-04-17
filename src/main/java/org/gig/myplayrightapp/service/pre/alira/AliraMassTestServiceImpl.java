@@ -1,73 +1,50 @@
 package org.gig.myplayrightapp.service.pre.alira;
 
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.gig.myplayrightapp.dto.AliraTestResult;
+import org.gig.myplayrightapp.service.AbstractMassTestService;
 import org.gig.myplayrightapp.service.pre.alira.dashboard.AliraNavigateTabGamesService;
 import org.gig.myplayrightapp.service.pre.alira.dashboard.AliraNavigateTabMarketingService;
 import org.gig.myplayrightapp.service.pre.alira.dashboard.AliraNavigateTabWebsiteService;
 import org.gig.myplayrightapp.util.ExcelReportUtil;
+import org.gig.myplayrightapp.util.PlaywrightUtil;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.List;
-import java.util.function.Supplier;
 
 @Slf4j
 @Service
-@RequiredArgsConstructor
-public class AliraMassTestServiceImpl implements AliraMassTestService {
+public class AliraMassTestServiceImpl extends AbstractMassTestService implements AliraMassTestService {
 
     private final AliraTestService aliraTestService;
     private final AliraNavigateTabGamesService gamesService;
     private final AliraNavigateTabWebsiteService websiteService;
     private final AliraNavigateTabMarketingService marketingService;
-    private final ExcelReportUtil excelReportUtil;
 
-    private static final String SCREENSHOT_DIR = "screenshots/alira/";
-    private static final String REPORT_TITLE   = "Alira Automated Test Report";
+    public AliraMassTestServiceImpl(
+            AliraTestService aliraTestService,
+            AliraNavigateTabGamesService gamesService,
+            AliraNavigateTabWebsiteService websiteService,
+            AliraNavigateTabMarketingService marketingService,
+            ExcelReportUtil excelReportUtil,
+            PlaywrightUtil playwrightUtil) {
+        super(excelReportUtil, playwrightUtil);
+        this.aliraTestService = aliraTestService;
+        this.gamesService = gamesService;
+        this.websiteService = websiteService;
+        this.marketingService = marketingService;
+    }
+
+    @Override protected String screenshotDir()    { return "screenshots/alira/"; }
+    @Override protected String reportTitle()      { return "Alira Automated Test Report"; }
+    @Override protected String environmentLabel() { return "Alira"; }
 
     @Override
     public byte[] runAllAliraTestsAndGenerateReport() {
-        List<TestDefinition> definitions = buildTestDefinitions();
-        List<AliraTestResult> results = new ArrayList<>();
-
-        for (TestDefinition def : definitions) {
-            log.info("Running {} — {}", def.id(), def.description());
-            LocalDateTime ranAt = LocalDateTime.now();
-            long start = System.currentTimeMillis();
-            String message;
-            try {
-                message = def.runner().get();
-            } catch (Exception e) {
-                message = "KO — Unexpected error: " + e.getMessage();
-                log.error("Error running {}", def.id(), e);
-            }
-            long duration = System.currentTimeMillis() - start;
-            boolean passed = message != null && (message.startsWith("OK") || message.startsWith("SKIPPED"));
-            String screenshotPath = excelReportUtil.resolveScreenshotPath(def.id(), message, SCREENSHOT_DIR);
-
-            results.add(new AliraTestResult(def.id(), def.description(), passed, message, screenshotPath, duration, ranAt));
-            log.info("{} {} ({}ms)", passed ? "✅" : "❌", def.id(), duration);
-        }
-
-        long totalMs = results.stream().mapToLong(AliraTestResult::durationMs).sum();
-        long passed  = results.stream().filter(AliraTestResult::passed).count();
-        long failed  = results.size() - passed;
-
-        log.info("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━");
-        log.info("Alira mass test finished");
-        log.info("  Total:    {}", results.size());
-        log.info("  ✅ Passed: {}", passed);
-        log.info("  ❌ Failed: {}", failed);
-        log.info("  Duration: {}", excelReportUtil.formatDuration(totalMs));
-        log.info("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━");
-
-        return excelReportUtil.generateReport(REPORT_TITLE, results);
+        return runAndGenerateReport();
     }
 
-    private List<TestDefinition> buildTestDefinitions() {
+    @Override
+    protected List<TestDefinition> buildTestDefinitions() {
         return List.of(
                 new TestDefinition("testCase001", "Login to Alira Back Office",
                         aliraTestService::testCase001LoginTest),
@@ -105,6 +82,4 @@ public class AliraMassTestServiceImpl implements AliraMassTestService {
                         marketingService::testCase017DeleteDepositPromotionTest)
         );
     }
-
-    private record TestDefinition(String id, String description, Supplier<String> runner) {}
 }

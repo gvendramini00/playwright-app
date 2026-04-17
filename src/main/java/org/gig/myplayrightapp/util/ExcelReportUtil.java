@@ -149,8 +149,11 @@ public class ExcelReportUtil {
 
     /**
      * Resolves the screenshot path for a test case.
-     * Checks the message for an embedded path first, then scans the directory
-     * for the most recently modified file matching the test case ID prefix.
+     * <ol>
+     *   <li>If the message already contains {@code "Screenshot: <path>"}, that path is used.</li>
+     *   <li>Otherwise the most recently modified file in {@code screenshotDir} is returned.
+     *       Tests run sequentially, so the latest file is always from the test that just ran.</li>
+     * </ol>
      */
     public String resolveScreenshotPath(String testCaseId, String message, String screenshotDir) {
         if (message != null && message.contains("Screenshot: ")) {
@@ -160,15 +163,14 @@ public class ExcelReportUtil {
         if (Files.exists(dir)) {
             try {
                 return Files.list(dir)
-                        .filter(p -> p.getFileName().toString().startsWith(testCaseId + "_"))
                         .max(Comparator.comparingLong(p -> p.toFile().lastModified()))
                         .map(Path::toString)
-                        .orElse(screenshotDir + testCaseId + ".png");
+                        .orElse(null);
             } catch (IOException e) {
                 log.warn("Could not list screenshots for {}", testCaseId);
             }
         }
-        return screenshotDir + testCaseId + ".png";
+        return null;
     }
 
     public String formatDuration(long ms) {

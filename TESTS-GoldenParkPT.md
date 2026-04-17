@@ -12,6 +12,7 @@ Database: `192.168.16.21`
 |----------|-------------|
 | `GET /api/test/gp-pt/register` | Manual registration with a generated unique PT player |
 | `GET /api/test/gp-pt/register-duplicate` | Registration with duplicate NIF — verify duplicate error |
+| `GET /api/test/gp-pt/runAll` | Run all 2 GP-PT tests in sequence — returns downloadable Excel report |
 
 ---
 

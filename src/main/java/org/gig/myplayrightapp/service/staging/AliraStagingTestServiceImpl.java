@@ -6,7 +6,7 @@ import com.microsoft.playwright.options.AriaRole;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.gig.myplayrightapp.exception.PlayerSearchException;
-import org.gig.myplayrightapp.util.AliraStagingLoginUtil;
+import org.gig.myplayrightapp.util.AliraLoginUtil;
 import org.gig.myplayrightapp.util.AliraTestUtils;
 import org.gig.myplayrightapp.util.PlaywrightUtil;
 import org.gig.myplayrightapp.util.ScreenshotUtil;
@@ -20,7 +20,7 @@ import static org.gig.myplayrightapp.enums.AliraVariables.*;
 @RequiredArgsConstructor
 public class AliraStagingTestServiceImpl implements AliraStagingTestService {
 
-    private final AliraStagingLoginUtil aliraStagingLoginUtil;
+    private final AliraLoginUtil aliraStagingLoginUtil;
     private final AliraTestUtils aliraTestUtils;
     private final ScreenshotUtil screenshotUtil;
     private final PlaywrightUtil playwrightUtil;
